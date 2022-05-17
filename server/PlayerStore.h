@@ -14,7 +14,7 @@
 #include <shared_mutex>
 #include <cstdint>
 
-#include <ysf/structs.h>
+#include "sdk.hpp"
 
 #include "PlayerInfo.h"
 
@@ -45,7 +45,7 @@ public:
 
 private:
 
-    static std::array<std::shared_mutex, MAX_PLAYERS> playerMutex;
-    static std::array<std::atomic<PlayerInfo*>, MAX_PLAYERS> playerInfo;
+    static std::array<std::shared_mutex, PLAYER_POOL_SIZE> playerMutex;
+    static std::array<std::atomic<PlayerInfo*>, PLAYER_POOL_SIZE> playerInfo;
 
 };

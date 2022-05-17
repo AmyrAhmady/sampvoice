@@ -17,7 +17,7 @@
 #include <set>
 #include <map>
 
-#include <ysf/structs.h>
+#include "sdk.hpp"
 
 #include "ControlPacket.h"
 #include "VoicePacket.h"
@@ -77,8 +77,8 @@ protected:
     int attachedSpeakersCount { 0 };
     int attachedListenersCount { 0 };
 
-    std::array<std::atomic_bool, MAX_PLAYERS> attachedSpeakers {};
-    std::array<std::atomic_bool, MAX_PLAYERS> attachedListeners {};
+    std::array<std::atomic_bool, PLAYER_POOL_SIZE> attachedSpeakers {};
+    std::array<std::atomic_bool, PLAYER_POOL_SIZE> attachedListeners {};
 
     ControlPacketContainerPtr packetCreateStream { nullptr };
     ControlPacketContainerPtr packetDeleteStream { nullptr };
