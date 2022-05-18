@@ -690,13 +690,13 @@ void SampVoiceComponent::onInit(IComponentList* components)
 	SetConsoleCtrlHandler(&WinExitHandler, TRUE);
 #endif
 
-	if (!Logger::Init(SV::kLogFileName, logprintf))
+	if (!Logger::Init(SV::kLogFileName, ompCore))
 	{
-		logprintf("[sv:err:main:Load] : failed to init logger");
+		ompCore->printLn("[sv:err:main:Load] : failed to init logger");
 		exit(0);
 	}
 
-	if (!Network::Init(logprintf))
+	if (!Network::Init(ompCore))
 	{
 		Logger::Log("[sv:err:main:Load] : failed to init network");
 		Logger::Free();
