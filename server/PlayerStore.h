@@ -1,10 +1,10 @@
 /*
-    This is a SampVoice project file
-    Developer: CyberMor <cyber.mor.2020@gmail.ru>
+	This is a SampVoice project file
+	Developer: CyberMor <cyber.mor.2020@gmail.ru>
 
-    See more here https://github.com/CyberMor/sampvoice
+	See more here https://github.com/CyberMor/sampvoice
 
-    Copyright (c) Daniel (CyberMor) 2020 All rights reserved
+	Copyright (c) Daniel (CyberMor) 2020 All rights reserved
 */
 
 #pragma once
@@ -20,32 +20,32 @@
 
 class PlayerStore {
 
-    PlayerStore() = delete;
-    ~PlayerStore() = delete;
-    PlayerStore(const PlayerStore&) = delete;
-    PlayerStore(PlayerStore&&) = delete;
-    PlayerStore& operator=(const PlayerStore&) = delete;
-    PlayerStore& operator=(PlayerStore&&) = delete;
+	PlayerStore() = delete;
+	~PlayerStore() = delete;
+	PlayerStore(const PlayerStore&) = delete;
+	PlayerStore(PlayerStore&&) = delete;
+	PlayerStore& operator=(const PlayerStore&) = delete;
+	PlayerStore& operator=(PlayerStore&&) = delete;
 
 public:
 
-    static void AddPlayerToStore(uint16_t playerId, uint8_t version, bool microStatus);
-    static void RemovePlayerFromStore(uint16_t playerId);
+	static void AddPlayerToStore(uint16_t playerId, uint8_t version, bool microStatus);
+	static void RemovePlayerFromStore(uint16_t playerId);
 
-    static void ClearStore();
+	static void ClearStore();
 
-    static bool IsPlayerConnected(uint16_t playerId) noexcept;
-    static bool IsPlayerHasPlugin(uint16_t playerId) noexcept;
+	static bool IsPlayerConnected(uint16_t playerId) noexcept;
+	static bool IsPlayerHasPlugin(uint16_t playerId) noexcept;
 
-    static PlayerInfo* RequestPlayerWithSharedAccess(uint16_t playerId) noexcept;
-    static void ReleasePlayerWithSharedAccess(uint16_t playerId) noexcept;
+	static PlayerInfo* RequestPlayerWithSharedAccess(uint16_t playerId) noexcept;
+	static void ReleasePlayerWithSharedAccess(uint16_t playerId) noexcept;
 
-    static PlayerInfo* RequestPlayerWithUniqueAccess(uint16_t playerId) noexcept;
-    static void ReleasePlayerWithUniqueAccess(uint16_t playerId) noexcept;
+	static PlayerInfo* RequestPlayerWithUniqueAccess(uint16_t playerId) noexcept;
+	static void ReleasePlayerWithUniqueAccess(uint16_t playerId) noexcept;
 
 private:
 
-    static std::array<std::shared_mutex, PLAYER_POOL_SIZE> playerMutex;
-    static std::array<std::atomic<PlayerInfo*>, PLAYER_POOL_SIZE> playerInfo;
+	static std::array<std::shared_mutex, PLAYER_POOL_SIZE> playerMutex;
+	static std::array<std::atomic<PlayerInfo*>, PLAYER_POOL_SIZE> playerInfo;
 
 };

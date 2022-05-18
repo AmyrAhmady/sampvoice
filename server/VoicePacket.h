@@ -1,10 +1,10 @@
 /*
-    This is a SampVoice project file
-    Developer: CyberMor <cyber.mor.2020@gmail.ru>
+	This is a SampVoice project file
+	Developer: CyberMor <cyber.mor.2020@gmail.ru>
 
-    See more here https://github.com/CyberMor/sampvoice
+	See more here https://github.com/CyberMor/sampvoice
 
-    Copyright (c) Daniel (CyberMor) 2020 All rights reserved
+	Copyright (c) Daniel (CyberMor) 2020 All rights reserved
 */
 
 #pragma once
@@ -18,18 +18,18 @@
 
 struct VoicePacket
 {
-    uint32_t hash;
-    uint32_t svrkey;
-    uint32_t packet;
-    uint32_t stream;
-    uint16_t sender;
-    uint16_t length;
-    uint32_t packid;
-    uint8_t  data[];
+	uint32_t hash;
+	uint32_t svrkey;
+	uint32_t packet;
+	uint32_t stream;
+	uint16_t sender;
+	uint16_t length;
+	uint32_t packid;
+	uint8_t  data[];
 
-    uint32_t GetFullSize() const noexcept;
-    bool CheckHeader() const noexcept;
-    void CalcHash() noexcept;
+	uint32_t GetFullSize() const noexcept;
+	bool CheckHeader() const noexcept;
+	void CalcHash() noexcept;
 };
 
 #pragma pack(pop)

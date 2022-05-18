@@ -250,7 +250,7 @@ namespace SV
 
 		Stream* SvCreateSLStreamAtPoint(const float distance, const float posx, const float posy, const float posz, const uint32_t color, const std::string& name) override
 		{
-			const auto stream = new (std::nothrow) StaticLocalStreamAtPoint(distance, CVector{ posx, posy, posz }, color, name);
+			const auto stream = new (std::nothrow) StaticLocalStreamAtPoint(distance, Vector3{ posx, posy, posz }, color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -372,7 +372,7 @@ namespace SV
 
 		void SvUpdatePositionForLPStream(PointStream* const lpStream, const float posx, const float posy, const float posz) override
 		{
-			lpStream->UpdatePosition(CVector(posx, posy, posz));
+			lpStream->UpdatePosition(Vector3(posx, posy, posz));
 		}
 
 		void SvUpdateDistanceForLStream(LocalStream* const lStream, const float distance) override

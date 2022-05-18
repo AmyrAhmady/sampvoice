@@ -213,7 +213,7 @@ namespace SV {
 #pragma pack(pop)
 }
 
-class SampVoiceComponent final : public IComponent, public CoreEventHandler, public PawnEventHandler, public PlayerEventHandler 
+class SampVoiceComponent final : public IComponent, public CoreEventHandler, public PawnEventHandler, public PlayerEventHandler
 {
 public:
 	PROVIDE_UID(0x6f7d8cbde58c9ce9);

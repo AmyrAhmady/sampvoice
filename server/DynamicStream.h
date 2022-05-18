@@ -1,10 +1,10 @@
 /*
-    This is a SampVoice project file
-    Developer: CyberMor <cyber.mor.2020@gmail.ru>
+	This is a SampVoice project file
+	Developer: CyberMor <cyber.mor.2020@gmail.ru>
 
-    See more here https://github.com/CyberMor/sampvoice
+	See more here https://github.com/CyberMor/sampvoice
 
-    Copyright (c) Daniel (CyberMor) 2020 All rights reserved
+	Copyright (c) Daniel (CyberMor) 2020 All rights reserved
 */
 
 #pragma once
@@ -17,63 +17,63 @@
 
 class DynamicStream : public virtual LocalStream {
 
-    DynamicStream() = delete;
-    DynamicStream(const DynamicStream&) = delete;
-    DynamicStream(DynamicStream&&) = delete;
-    DynamicStream& operator=(const DynamicStream&) = delete;
-    DynamicStream& operator=(DynamicStream&&) = delete;
+	DynamicStream() = delete;
+	DynamicStream(const DynamicStream&) = delete;
+	DynamicStream(DynamicStream&&) = delete;
+	DynamicStream& operator=(const DynamicStream&) = delete;
+	DynamicStream& operator=(DynamicStream&&) = delete;
 
 protected:
 
-    explicit DynamicStream(float distance, uint32_t maxPlayers);
+	explicit DynamicStream(float distance, uint32_t maxPlayers);
 
 public:
 
-    virtual ~DynamicStream() noexcept = default;
+	virtual ~DynamicStream() noexcept = default;
 
 public:
 
-    virtual void Tick() = 0;
+	virtual void Tick() = 0;
 
-    bool AttachListener(uint16_t playerId) noexcept override;
-    bool DetachListener(uint16_t playerId) noexcept override;
-    std::vector<uint16_t> DetachAllListeners() noexcept override;
-
-protected:
-
-    const uint32_t maxPlayers;
+	bool AttachListener(uint16_t playerId) noexcept override;
+	bool DetachListener(uint16_t playerId) noexcept override;
+	std::vector<uint16_t> DetachAllListeners() noexcept override;
 
 protected:
 
-    struct PlayerSortInfo {
+	const uint32_t maxPlayers;
 
-        PlayerSortInfo() = delete;
-        PlayerSortInfo(const PlayerSortInfo&) noexcept = default;
-        PlayerSortInfo(PlayerSortInfo&&) noexcept = default;
-        PlayerSortInfo& operator=(const PlayerSortInfo&) = delete;
-        PlayerSortInfo& operator=(PlayerSortInfo&&) = delete;
+protected:
 
-    public:
+	struct PlayerSortInfo {
 
-        explicit PlayerSortInfo(float distance, uint32_t playerId) noexcept
-            : distance(distance), playerId(playerId) {}
+		PlayerSortInfo() = delete;
+		PlayerSortInfo(const PlayerSortInfo&) noexcept = default;
+		PlayerSortInfo(PlayerSortInfo&&) noexcept = default;
+		PlayerSortInfo& operator=(const PlayerSortInfo&) = delete;
+		PlayerSortInfo& operator=(PlayerSortInfo&&) = delete;
 
-        ~PlayerSortInfo() noexcept = default;
+	public:
 
-    public:
+		explicit PlayerSortInfo(float distance, uint32_t playerId) noexcept
+			: distance(distance), playerId(playerId) {}
 
-        bool operator<(const PlayerSortInfo& object) const noexcept
-        {
-            return this->distance < object.distance;
-        }
+		~PlayerSortInfo() noexcept = default;
 
-    public:
+	public:
 
-        const float distance;
-        const uint32_t playerId;
+		bool operator<(const PlayerSortInfo& object) const noexcept
+		{
+			return this->distance < object.distance;
+		}
 
-    };
+	public:
 
-    using PlayerSortList = std::multiset<PlayerSortInfo>;
+		const float distance;
+		const uint32_t playerId;
+
+	};
+
+	using PlayerSortList = std::multiset<PlayerSortInfo>;
 
 };

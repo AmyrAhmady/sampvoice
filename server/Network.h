@@ -1,10 +1,10 @@
 /*
-    This is a SampVoice project file
-    Developer: CyberMor <cyber.mor.2020@gmail.ru>
+	This is a SampVoice project file
+	Developer: CyberMor <cyber.mor.2020@gmail.ru>
 
-    See more here https://github.com/CyberMor/sampvoice
+	See more here https://github.com/CyberMor/sampvoice
 
-    Copyright (c) Daniel (CyberMor) 2020 All rights reserved
+	Copyright (c) Daniel (CyberMor) 2020 All rights reserved
 */
 
 #pragma once
@@ -29,6 +29,7 @@
 #include <SPSCQueue.h>
 #include <util/raknet.h>
 #include <util/timer.h>
+#include <map>
 
 #include "ControlPacket.h"
 #include "VoicePacket.h"
@@ -36,101 +37,101 @@
 
 class Network {
 
-    Network() = delete;
-    ~Network() = delete;
-    Network(const Network&) = delete;
-    Network(Network&&) = delete;
-    Network& operator=(const Network&) = delete;
-    Network& operator=(Network&&) = delete;
+	Network() = delete;
+	~Network() = delete;
+	Network(const Network&) = delete;
+	Network(Network&&) = delete;
+	Network& operator=(const Network&) = delete;
+	Network& operator=(Network&&) = delete;
 
 private:
 
-    static constexpr uint8_t kRaknetPacketId = 222;
-    static constexpr uint32_t kMaxVoicePacketSize = 1400;
-    static constexpr uint32_t kMaxVoiceDataSize = kMaxVoicePacketSize - sizeof(VoicePacket);
-    static constexpr uint32_t kSendBufferSize = 16 * 1024 * 1024;
-    static constexpr uint32_t kRecvBufferSize = 32 * 1024 * 1024;
-    static constexpr Timer::time_t kKeepAliveInterval = 10000;
+	static constexpr uint8_t kRaknetPacketId = 222;
+	static constexpr uint32_t kMaxVoicePacketSize = 1400;
+	static constexpr uint32_t kMaxVoiceDataSize = kMaxVoicePacketSize - sizeof(VoicePacket);
+	static constexpr uint32_t kSendBufferSize = 16 * 1024 * 1024;
+	static constexpr uint32_t kRecvBufferSize = 32 * 1024 * 1024;
+	static constexpr Timer::time_t kKeepAliveInterval = 10000;
 
 private:
 
-    using ConnectCallback = std::function<void(uint16_t, const SV::ConnectPacket&)>;
-    using PlayerInitCallback = std::function<void(uint16_t, SV::PluginInitPacket&)>;
-    using DisconnectCallback = std::function<void(uint16_t)>;
+	using ConnectCallback = std::function<void(uint16_t, const SV::ConnectPacket&)>;
+	using PlayerInitCallback = std::function<void(uint16_t, SV::PluginInitPacket&)>;
+	using DisconnectCallback = std::function<void(uint16_t)>;
 
 public:
 
-    static bool Init(const void* serverBaseAddress) noexcept;
-    static void Free() noexcept;
+	static bool Init(ICore* ompCore) noexcept;
+	static void Free() noexcept;
 
-    static bool Bind() noexcept;
-    static void Process() noexcept;
+	static bool Bind() noexcept;
+	static void Process() noexcept;
 
-    static bool SendControlPacket(uint16_t playerId, const ControlPacket& controlPacket);
-    static bool SendVoicePacket(uint16_t playerId, const VoicePacket& voicePacket);
-    static ControlPacketContainerPtr ReceiveControlPacket(uint16_t& sender) noexcept;
-    static VoicePacketContainerPtr ReceiveVoicePacket();
+	static bool SendControlPacket(uint16_t playerId, const ControlPacket& controlPacket);
+	static bool SendVoicePacket(uint16_t playerId, const VoicePacket& voicePacket);
+	static ControlPacketContainerPtr ReceiveControlPacket(uint16_t& sender) noexcept;
+	static VoicePacketContainerPtr ReceiveVoicePacket();
 
-    static std::size_t AddConnectCallback(ConnectCallback callback) noexcept;
-    static std::size_t AddPlayerInitCallback(PlayerInitCallback callback) noexcept;
-    static std::size_t AddDisconnectCallback(DisconnectCallback callback) noexcept;
-    static void RemoveConnectCallback(std::size_t callback) noexcept;
-    static void RemovePlayerInitCallback(std::size_t callback) noexcept;
-    static void RemoveDisconnectCallback(std::size_t callback) noexcept;
-
-private:
-
-    static bool ConnectHandler(uint16_t playerId, RPCParameters& rpc);
-    static bool PacketHandler(uint16_t playerId, Packet& packet);
-    static void DisconnectHandler(uint16_t playerId);
+	static std::size_t AddConnectCallback(ConnectCallback callback) noexcept;
+	static std::size_t AddPlayerInitCallback(PlayerInitCallback callback) noexcept;
+	static std::size_t AddDisconnectCallback(DisconnectCallback callback) noexcept;
+	static void RemoveConnectCallback(std::size_t callback) noexcept;
+	static void RemovePlayerInitCallback(std::size_t callback) noexcept;
+	static void RemoveDisconnectCallback(std::size_t callback) noexcept;
 
 private:
 
-    static bool initStatus;
-    static bool bindStatus;
-
-    static SOCKET socketHandle;
-    static uint16_t serverPort;
-
-    static std::vector<ConnectCallback> connectCallbacks;
-    static std::vector<PlayerInitCallback> playerInitCallbacks;
-    static std::vector<DisconnectCallback> disconnectCallbacks;
-
-    static std::array<std::atomic_bool, MAX_PLAYERS> playerStatusTable;
-    static std::array<std::shared_ptr<sockaddr_in>, MAX_PLAYERS> playerAddrTable;
-    static std::array<uint64_t, MAX_PLAYERS> playerKeyTable;
-
-    static std::shared_mutex playerKeyToPlayerIdTableMutex;
-    static std::map<uint64_t, uint16_t> playerKeyToPlayerIdTable;
+	static bool ConnectHandler(uint16_t playerId, RPCParameters& rpc);
+	static bool PacketHandler(uint16_t playerId, Packet& packet);
+	static void DisconnectHandler(uint16_t playerId);
 
 private:
 
-    struct ControlPacketInfo {
+	static bool initStatus;
+	static bool bindStatus;
 
-        ControlPacketInfo() noexcept = default;
-        ControlPacketInfo(const ControlPacketInfo&) = default;
-        ControlPacketInfo(ControlPacketInfo&&) noexcept = default;
-        ControlPacketInfo& operator=(const ControlPacketInfo&) = default;
-        ControlPacketInfo& operator=(ControlPacketInfo&&) noexcept = default;
+	static SOCKET socketHandle;
+	static uint16_t serverPort;
 
-    private:
+	static std::vector<ConnectCallback> connectCallbacks;
+	static std::vector<PlayerInitCallback> playerInitCallbacks;
+	static std::vector<DisconnectCallback> disconnectCallbacks;
 
-        using PacketPtr = ControlPacketContainerPtr;
+	static std::array<std::atomic_bool, PLAYER_POOL_SIZE> playerStatusTable;
+	static std::array<std::shared_ptr<sockaddr_in>, PLAYER_POOL_SIZE> playerAddrTable;
+	static std::array<uint64_t, PLAYER_POOL_SIZE> playerKeyTable;
 
-    public:
+	static std::shared_mutex playerKeyToPlayerIdTableMutex;
+	static std::map<uint64_t, uint16_t> playerKeyToPlayerIdTable;
 
-        explicit ControlPacketInfo(PacketPtr packet, uint16_t sender) noexcept
-            : packet(std::move(packet)), sender(sender) {}
+private:
 
-        ~ControlPacketInfo() noexcept = default;
+	struct ControlPacketInfo {
 
-    public:
+		ControlPacketInfo() noexcept = default;
+		ControlPacketInfo(const ControlPacketInfo&) = default;
+		ControlPacketInfo(ControlPacketInfo&&) noexcept = default;
+		ControlPacketInfo& operator=(const ControlPacketInfo&) = default;
+		ControlPacketInfo& operator=(ControlPacketInfo&&) noexcept = default;
 
-        PacketPtr packet { nullptr };
-        uint16_t sender { NULL };
+	private:
 
-    };
+		using PacketPtr = ControlPacketContainerPtr;
 
-    static SPSCQueue<ControlPacketInfo> controlQueue;
+	public:
+
+		explicit ControlPacketInfo(PacketPtr packet, uint16_t sender) noexcept
+			: packet(std::move(packet)), sender(sender) {}
+
+		~ControlPacketInfo() noexcept = default;
+
+	public:
+
+		PacketPtr packet{ nullptr };
+		uint16_t sender{ NULL };
+
+	};
+
+	static SPSCQueue<ControlPacketInfo> controlQueue;
 
 };

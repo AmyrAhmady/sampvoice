@@ -1,10 +1,10 @@
 /*
-    This is a SampVoice project file
-    Developer: CyberMor <cyber.mor.2020@gmail.ru>
+	This is a SampVoice project file
+	Developer: CyberMor <cyber.mor.2020@gmail.ru>
 
-    See more here https://github.com/CyberMor/sampvoice
+	See more here https://github.com/CyberMor/sampvoice
 
-    Copyright (c) Daniel (CyberMor) 2020 All rights reserved
+	Copyright (c) Daniel (CyberMor) 2020 All rights reserved
 */
 
 #pragma once
@@ -19,11 +19,11 @@
 
 struct ControlPacket
 {
-    uint16_t packet;
-    uint16_t length;
-    uint8_t  data[];
+	uint16_t packet;
+	uint16_t length;
+	uint8_t  data[];
 
-    uint32_t GetFullSize() const noexcept;
+	uint32_t GetFullSize() const noexcept;
 };
 
 #pragma pack(pop)

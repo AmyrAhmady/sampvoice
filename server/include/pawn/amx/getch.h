@@ -3,10 +3,10 @@
 #define GETCH_H
 
 #if defined __cplusplus
-  extern "C" {
+extern "C" {
 #endif
-int getch(void);
-int kbhit(void);
+	int getch(void);
+	int kbhit(void);
 
 #if defined __cplusplus
 }

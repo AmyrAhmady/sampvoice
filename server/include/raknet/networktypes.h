@@ -55,7 +55,7 @@ typedef unsigned short PlayerIndex;
 typedef unsigned char RPCIndex;
 const int MAX_RPC_MAP_SIZE = ((RPCIndex)-1) - 1;
 
-using RPCFunction = void(*)(RPCParameters *p);
+using RPCFunction = void(*)(RPCParameters* p);
 
 #pragma pack(push, 1)
 
@@ -87,7 +87,7 @@ struct Packet
 
 struct RPCParameters
 {
-	unsigned char *input;
+	unsigned char* input;
 	unsigned int numberOfBitsOfData;
 	PlayerID sender;
 };
