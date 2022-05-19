@@ -12,7 +12,7 @@
 #include <string>
 #include <cstdint>
 
-#include <ysf/utils/cvector.h>
+#include "sdk.hpp"
 
 #include "PointStream.h"
 #include "DynamicStream.h"
@@ -28,7 +28,7 @@ class DynamicLocalStreamAtPoint : public PointStream, public DynamicStream {
 public:
 
 	explicit DynamicLocalStreamAtPoint(float distance, uint32_t maxPlayers,
-		const CVector& position, uint32_t color,
+		const Vector3& position, uint32_t color,
 		const std::string& name);
 
 	~DynamicLocalStreamAtPoint() noexcept = default;

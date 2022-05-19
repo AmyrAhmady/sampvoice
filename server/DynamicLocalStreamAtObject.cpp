@@ -12,7 +12,6 @@
 #include <cassert>
 #include <cstring>
 
-#include <ysf/globals.h>
 #include <util/memory.hpp>
 #include <util/logger.h>
 
@@ -28,9 +27,9 @@ DynamicLocalStreamAtObject::DynamicLocalStreamAtObject(
 	: LocalStream(distance)
 	, DynamicStream(distance, maxPlayers)
 {
-	assert(pNetGame != nullptr);
-	assert(pNetGame->pPlayerPool != nullptr);
-	assert(pNetGame->pObjectPool != nullptr);
+	assert(SampVoiceComponent::instance != nullptr);
+	assert(SampVoiceComponent::GetPlayers() != nullptr);
+	assert(SampVoiceComponent::GetObjects() != nullptr);
 
 	const auto nameString = name.c_str();
 	const auto nameLength = name.size() + 1;
@@ -43,27 +42,21 @@ DynamicLocalStreamAtObject::DynamicLocalStreamAtObject(
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->target = objectId;
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->color = color;
 
-	if (pNetGame->pObjectPool->pObjects[objectId] != nullptr)
+	IObject* object = SampVoiceComponent::instance->GetObjects()->get(objectId);
+	if (object != nullptr)
 	{
 		PlayerSortList playerList;
 
-		const CVector& streamPosition = pNetGame->pObjectPool->pObjects[objectId]->matWorld.pos;
+		const Vector3& streamPosition = object->getPosition();
 
-		if (pNetGame->pPlayerPool->dwConnectedPlayers != 0)
+		IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+		for (IPlayer* player : playerPool->entries())
 		{
-			const auto playerPoolSize = pNetGame->pPlayerPool->dwPlayerPoolSize;
+			float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);
 
-			for (uint16_t iPlayerId{ 0 }; iPlayerId <= playerPoolSize; ++iPlayerId)
+			if (PlayerStore::IsPlayerHasPlugin(player->getID()) && (distanceToPlayer <= distance))
 			{
-				const auto ipPlayer = pNetGame->pPlayerPool->pPlayer[iPlayerId];
-
-				float distanceToPlayer;
-
-				if (ipPlayer != nullptr && PlayerStore::IsPlayerHasPlugin(iPlayerId) &&
-					(distanceToPlayer = (ipPlayer->vecPosition - streamPosition).Length()) <= distance)
-				{
-					playerList.emplace(distanceToPlayer, iPlayerId);
-				}
+				playerList.emplace(distanceToPlayer, player->getID());
 			}
 		}
 
@@ -79,41 +72,35 @@ DynamicLocalStreamAtObject::DynamicLocalStreamAtObject(
 
 void DynamicLocalStreamAtObject::Tick()
 {
-	assert(pNetGame != nullptr);
-	assert(pNetGame->pPlayerPool != nullptr);
-	assert(pNetGame->pObjectPool != nullptr);
+	assert(SampVoiceComponent::instance != nullptr);
+	assert(SampVoiceComponent::GetPlayers() != nullptr);
+	assert(SampVoiceComponent::GetObjects() != nullptr);
 
 	const auto objectId = PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->target;
 
-	if (pNetGame->pObjectPool->pObjects[objectId] != nullptr)
+	IObject* object = SampVoiceComponent::instance->GetObjects()->get(objectId);
+	if (object != nullptr)
 	{
 		PlayerSortList playerList;
 
-		const CVector& streamPosition = pNetGame->pObjectPool->pObjects[objectId]->matWorld.pos;
+		const Vector3& streamPosition = object->getPosition();
 		const float streamDistance = PackGetStruct(&*this->packetStreamUpdateDistance, SV::UpdateLStreamDistancePacket)->distance;
 
-		if (pNetGame->pPlayerPool->dwConnectedPlayers != 0)
+		IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+		for (IPlayer* player : playerPool->entries())
 		{
-			const auto playerPoolSize = pNetGame->pPlayerPool->dwPlayerPoolSize;
+			float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);;
 
-			for (uint16_t iPlayerId{ 0 }; iPlayerId <= playerPoolSize; ++iPlayerId)
+			if (PlayerStore::IsPlayerHasPlugin(player->getID()) && distanceToPlayer <= streamDistance)
 			{
-				const auto ipPlayer = pNetGame->pPlayerPool->pPlayer[iPlayerId];
-
-				float distanceToPlayer;
-
-				if (ipPlayer != nullptr && PlayerStore::IsPlayerHasPlugin(iPlayerId) &&
-					(distanceToPlayer = (ipPlayer->vecPosition - streamPosition).Length()) <= streamDistance)
+				if (!this->HasListener(player->getID()))
 				{
-					if (!this->HasListener(iPlayerId))
-					{
-						playerList.emplace(distanceToPlayer, iPlayerId);
-					}
+					playerList.emplace(distanceToPlayer, player->getID());
 				}
-				else if (this->HasListener(iPlayerId))
-				{
-					this->Stream::DetachListener(iPlayerId);
-				}
+			}
+			else if (this->HasListener(player->getID()))
+			{
+				this->Stream::DetachListener(player->getID());
 			}
 		}
 
