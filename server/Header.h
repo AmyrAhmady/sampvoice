@@ -14,6 +14,8 @@
 #include <thread>
 
 #include "Server/Components/Pawn/pawn.hpp"
+#include "Server/Components/Vehicles/vehicles.hpp"
+#include "Server/Components/Objects/objects.hpp"
 #include "sdk.hpp"
 
 #define SleepForMilliseconds(mscount) (std::this_thread::sleep_for(std::chrono::milliseconds(mscount)))
@@ -218,10 +220,12 @@ class SampVoiceComponent final : public IComponent, public CoreEventHandler, pub
 public:
 	PROVIDE_UID(0x6f7d8cbde58c9ce9);
 
-	static SampVoiceComponent* svComponent;
+	static SampVoiceComponent* instance;
 
-	static ICore* GetCore() { return svComponent->ompCore; }
-	static IPlayerPool* GetPlayers() { return svComponent->players; }
+	static ICore* GetCore() { return instance->ompCore; }
+	static IPlayerPool* GetPlayers() { return instance->players; }
+	static IVehiclesComponent* GetVehicles() { return instance->vehiclesComponent; }
+	static IObjectsComponent* GetObjects() { return instance->objectsComponent; }
 
 	StringView componentName() const override { return "sampvoice open.mp port"; }
 
@@ -232,7 +236,7 @@ public:
 
 	void onLoad(ICore* c) override
 	{
-		svComponent = this;
+		instance = this;
 		ompCore = c;
 		players = &c->getPlayers();
 	}
@@ -266,5 +270,7 @@ private:
 	ICore* ompCore;
 	IPlayerPool* players;
 	IPawnComponent* pawnComponent = nullptr;
+	IVehiclesComponent* vehiclesComponent = nullptr;
+	IObjectsComponent* objectsComponent = nullptr;
 	void* PLUGIN_FUNCTIONS[17];
 };

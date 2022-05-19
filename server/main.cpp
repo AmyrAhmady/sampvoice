@@ -46,7 +46,7 @@
 #define __forceinline __attribute__((always_inline))
 #endif
 
-SampVoiceComponent* SampVoiceComponent::svComponent = nullptr;
+SampVoiceComponent* SampVoiceComponent::instance = nullptr;
 
 namespace SV
 {
@@ -262,10 +262,14 @@ namespace SV
 
 		Stream* SvCreateSLStreamAtVehicle(const float distance, const uint16_t vehicleId, const uint32_t color, const std::string& name) override
 		{
-			if (pNetGame->pVehiclePool->pVehicle[vehicleId] == nullptr)
+			if (SampVoiceComponent::instance == nullptr && SampVoiceComponent::GetVehicles() == nullptr)
 				return nullptr;
 
-			const auto stream = new (std::nothrow) StaticLocalStreamAtVehicle(distance, vehicleId, color, name);
+			IVehicle* vehicle = SampVoiceComponent::GetVehicles()->get(vehicleId);
+			if (vehicle == nullptr)
+				return nullptr;
+
+			const auto stream = new (std::nothrow) StaticLocalStreamAtVehicle(distance, vehicle->getID(), color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -277,10 +281,14 @@ namespace SV
 
 		Stream* SvCreateSLStreamAtPlayer(const float distance, const uint16_t playerId, const uint32_t color, const std::string& name) override
 		{
-			if (pNetGame->pPlayerPool->pPlayer[playerId] == nullptr)
+			if (SampVoiceComponent::instance == nullptr && SampVoiceComponent::GetPlayers() == nullptr)
 				return nullptr;
 
-			const auto stream = new (std::nothrow) StaticLocalStreamAtPlayer(distance, playerId, color, name);
+			IPlayer* player = SampVoiceComponent::GetPlayers()->get(playerId);
+			if (player == nullptr)
+				return nullptr;
+
+			const auto stream = new (std::nothrow) StaticLocalStreamAtPlayer(distance, player->getID(), color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -292,10 +300,14 @@ namespace SV
 
 		Stream* SvCreateSLStreamAtObject(const float distance, const uint16_t objectId, const uint32_t color, const std::string& name) override
 		{
-			if (pNetGame->pObjectPool->pObjects[objectId] == nullptr)
+			if (SampVoiceComponent::instance == nullptr && SampVoiceComponent::GetObjects() == nullptr)
 				return nullptr;
 
-			const auto stream = new (std::nothrow) StaticLocalStreamAtObject(distance, objectId, color, name);
+			IObject* object = SampVoiceComponent::GetObjects()->get(objectId);
+			if (object == nullptr)
+				return nullptr;
+
+			const auto stream = new (std::nothrow) StaticLocalStreamAtObject(distance, object->getID(), color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -309,7 +321,7 @@ namespace SV
 
 		Stream* SvCreateDLStreamAtPoint(const float distance, const uint32_t maxPlayers, const float posx, const float posy, const float posz, const uint32_t color, const std::string& name) override
 		{
-			const auto stream = new (std::nothrow) DynamicLocalStreamAtPoint(distance, maxPlayers, CVector{ posx, posy, posz }, color, name);
+			const auto stream = new (std::nothrow) DynamicLocalStreamAtPoint(distance, maxPlayers, Vector3{ posx, posy, posz }, color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -322,10 +334,14 @@ namespace SV
 
 		Stream* SvCreateDLStreamAtVehicle(const float distance, const uint32_t maxPlayers, const uint16_t vehicleId, const uint32_t color, const std::string& name) override
 		{
-			if (pNetGame->pVehiclePool->pVehicle[vehicleId] == nullptr)
+			if (SampVoiceComponent::instance == nullptr && SampVoiceComponent::GetVehicles() == nullptr)
 				return nullptr;
 
-			const auto stream = new (std::nothrow) DynamicLocalStreamAtVehicle(distance, maxPlayers, vehicleId, color, name);
+			IVehicle* vehicle = SampVoiceComponent::GetVehicles()->get(vehicleId);
+			if (vehicle == nullptr)
+				return nullptr;
+
+			const auto stream = new (std::nothrow) DynamicLocalStreamAtVehicle(distance, maxPlayers, vehicle->getID(), color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -338,10 +354,14 @@ namespace SV
 
 		Stream* SvCreateDLStreamAtPlayer(const float distance, const uint32_t maxPlayers, const uint16_t playerId, const uint32_t color, const std::string& name) override
 		{
-			if (pNetGame->pPlayerPool->pPlayer[playerId] == nullptr)
+			if (SampVoiceComponent::instance == nullptr && SampVoiceComponent::GetPlayers() == nullptr)
 				return nullptr;
 
-			const auto stream = new (std::nothrow) DynamicLocalStreamAtPlayer(distance, maxPlayers, playerId, color, name);
+			IPlayer* player = SampVoiceComponent::GetPlayers()->get(playerId);
+			if (player == nullptr)
+				return nullptr;
+
+			const auto stream = new (std::nothrow) DynamicLocalStreamAtPlayer(distance, maxPlayers, player->getID(), color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -354,10 +374,14 @@ namespace SV
 
 		Stream* SvCreateDLStreamAtObject(const float distance, const uint32_t maxPlayers, const uint16_t objectId, const uint32_t color, const std::string& name) override
 		{
-			if (pNetGame->pObjectPool->pObjects[objectId] == nullptr)
+			if (SampVoiceComponent::instance == nullptr && SampVoiceComponent::GetObjects() == nullptr)
 				return nullptr;
 
-			const auto stream = new (std::nothrow) DynamicLocalStreamAtObject(distance, maxPlayers, objectId, color, name);
+			IObject* object = SampVoiceComponent::GetObjects()->get(objectId);
+			if (object == nullptr)
+				return nullptr;
+
+			const auto stream = new (std::nothrow) DynamicLocalStreamAtObject(distance, maxPlayers, object->getID(), color, name);
 			if (stream == nullptr) return nullptr;
 
 			const auto baseStream = static_cast<Stream*>(stream);
@@ -660,9 +684,9 @@ namespace SV
 #ifdef _WIN32
 BOOL WINAPI WinExitHandler(DWORD) noexcept
 {
-	if (SampVoiceComponent::svComponent)
+	if (SampVoiceComponent::instance)
 	{
-		SampVoiceComponent::svComponent->onFree(SampVoiceComponent::svComponent);
+		SampVoiceComponent::instance->onFree(SampVoiceComponent::instance);
 	}
 	return FALSE;
 }
@@ -671,12 +695,46 @@ BOOL WINAPI WinExitHandler(DWORD) noexcept
 void SampVoiceComponent::onInit(IComponentList* components)
 {
 	pawnComponent = components->queryComponent<IPawnComponent>();
+	objectsComponent = components->queryComponent<IObjectsComponent>();
+	vehiclesComponent = components->queryComponent<IVehiclesComponent>();
+
 	if (pawnComponent == nullptr)
 	{
 		StringView name = componentName();
 		ompCore->logLn(LogLevel::Error,
 			"Error loading component %.*s: Pawn component not loaded",
 			name.length(), name.data());
+		return;
+	}
+
+	if (objectsComponent == nullptr)
+	{
+		StringView name = componentName();
+		ompCore->logLn(LogLevel::Error,
+			"Error loading component %.*s: Objects component not loaded",
+			name.length(), name.data());
+		return;
+	}
+
+	if (vehiclesComponent == nullptr)
+	{
+		StringView name = componentName();
+		ompCore->logLn(LogLevel::Error,
+			"Error loading component %.*s: Vehicles component not loaded",
+			name.length(), name.data());
+		return;
+	}
+
+	if (!Logger::Init(SV::kLogFileName, ompCore))
+	{
+		ompCore->logLn(LogLevel::Error, "[sv:err:main:Load] : failed to init logger");
+		return;
+	}
+
+	if (!Network::Init(ompCore))
+	{
+		ompCore->logLn(LogLevel::Error, "[sv:err:main:Load] : failed to init network");
+		Logger::Free();
 		return;
 	}
 
@@ -689,19 +747,6 @@ void SampVoiceComponent::onInit(IComponentList* components)
 #ifdef _WIN32
 	SetConsoleCtrlHandler(&WinExitHandler, TRUE);
 #endif
-
-	if (!Logger::Init(SV::kLogFileName, ompCore))
-	{
-		ompCore->printLn("[sv:err:main:Load] : failed to init logger");
-		exit(0);
-	}
-
-	if (!Network::Init(ompCore))
-	{
-		Logger::Log("[sv:err:main:Load] : failed to init network");
-		Logger::Free();
-		exit(0);
-	}
 
 	Network::AddConnectCallback(SV::ConnectHandler);
 	Network::AddPlayerInitCallback(SV::PlayerInitHandler);
