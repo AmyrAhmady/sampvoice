@@ -189,7 +189,7 @@ void RakNet::Free() noexcept
 
 	RakNet::loadStatus = false;
 
-	for (uint16_t playerId{ 0 }; playerId < MAX_PLAYERS; ++playerId)
+	for (uint16_t playerId{ 0 }; playerId < PLAYER_POOL_SIZE; ++playerId)
 	{
 		if (RakNet::playerStatus[playerId])
 		{
@@ -418,7 +418,7 @@ void RakNet::ConnectHook(RPCParameters* const rpc) noexcept
 {
 	const auto sender = RakNet::GetIndexFromPlayerId(rpc->sender);
 
-	if (sender >= 0 && sender < MAX_PLAYERS)
+	if (sender >= 0 && sender < PLAYER_POOL_SIZE)
 	{
 		if (RakNet::playerStatus[sender])
 		{
@@ -452,7 +452,7 @@ void THISCALL RakNet::RegisterRpcHook(void* const _this, uint8_t* const rpcIdPoi
 
 int THISCALL RakNet::DisconnectHook(void* const _this, const int playerId, const int reason) noexcept
 {
-	if (playerId >= 0 && playerId < MAX_PLAYERS)
+	if (playerId >= 0 && playerId < PLAYER_POOL_SIZE)
 	{
 		if (RakNet::playerStatus[playerId])
 		{
@@ -506,7 +506,7 @@ std::vector<RakNet::ConnectCallback> RakNet::connectCallbacks;
 std::vector<RakNet::PacketCallback> RakNet::packetCallbacks;
 std::vector<RakNet::DisconnectCallback> RakNet::disconnectCallbacks;
 
-std::array<bool, MAX_PLAYERS> RakNet::playerStatus{};
+std::array<bool, PLAYER_POOL_SIZE> RakNet::playerStatus{};
 
 RPCFunction RakNet::origConnectHandler{ nullptr };
 
@@ -516,13 +516,13 @@ Memory::JumpHookPtr RakNet::hookGetRakServerInterface{ nullptr };
 // ----------------------------------------------------------------------------
 
 std::shared_mutex RakNet::rpcQueueMutex;
-MPMCQueue<RakNet::SendRpcInfo> RakNet::rpcQueue{ 16 * MAX_PLAYERS };
+MPMCQueue<RakNet::SendRpcInfo> RakNet::rpcQueue{ 16 * PLAYER_POOL_SIZE };
 
 std::shared_mutex RakNet::packetQueueMutex;
-MPMCQueue<RakNet::SendPacketInfo> RakNet::packetQueue{ 16 * MAX_PLAYERS };
+MPMCQueue<RakNet::SendPacketInfo> RakNet::packetQueue{ 16 * PLAYER_POOL_SIZE };
 
 std::shared_mutex RakNet::kickQueueMutex;
-MPMCQueue<uint16_t> RakNet::kickQueue{ MAX_PLAYERS };
+MPMCQueue<uint16_t> RakNet::kickQueue{ PLAYER_POOL_SIZE };
 
 // ----------------------------------------------------------------------------
 

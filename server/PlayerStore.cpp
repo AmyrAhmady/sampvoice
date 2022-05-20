@@ -11,11 +11,9 @@
 
 #include <cassert>
 
-#include <ysf/globals.h>
-
 void PlayerStore::AddPlayerToStore(const uint16_t playerId, const uint8_t version, const bool microStatus)
 {
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
 	if (const auto pPlayerInfo = new (std::nothrow) PlayerInfo(version, microStatus))
 	{
@@ -38,7 +36,7 @@ void PlayerStore::AddPlayerToStore(const uint16_t playerId, const uint8_t versio
 
 void PlayerStore::RemovePlayerFromStore(const uint16_t playerId)
 {
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
 	PlayerStore::playerMutex[playerId].lock();
 	const auto pPlayerInfo = PlayerStore::playerInfo[playerId].exchange(nullptr, std::memory_order_acq_rel);
@@ -58,30 +56,30 @@ void PlayerStore::RemovePlayerFromStore(const uint16_t playerId)
 
 void PlayerStore::ClearStore()
 {
-	for (uint16_t playerId{ 0 }; playerId < MAX_PLAYERS; ++playerId)
+	for (uint16_t playerId{ 0 }; playerId < PLAYER_POOL_SIZE; ++playerId)
 		PlayerStore::RemovePlayerFromStore(playerId);
 }
 
 bool PlayerStore::IsPlayerConnected(const uint16_t playerId) noexcept
 {
-	assert(pNetGame != nullptr);
-	assert(pNetGame->pPlayerPool != nullptr);
+	assert(SampVoiceComponent::instance != nullptr);
+	assert(SampVoiceComponent::GetPlayers() != nullptr);
 
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
-	return pNetGame->pPlayerPool->bIsPlayerConnected[playerId];
+	return SampVoiceComponent::GetPlayers()->get(playerId) != nullptr;
 }
 
 bool PlayerStore::IsPlayerHasPlugin(const uint16_t playerId) noexcept
 {
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
 	return PlayerStore::playerInfo[playerId].load(std::memory_order_relaxed);
 }
 
 PlayerInfo* PlayerStore::RequestPlayerWithSharedAccess(const uint16_t playerId) noexcept
 {
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
 	PlayerStore::playerMutex[playerId].lock_shared();
 
@@ -90,14 +88,14 @@ PlayerInfo* PlayerStore::RequestPlayerWithSharedAccess(const uint16_t playerId) 
 
 void PlayerStore::ReleasePlayerWithSharedAccess(const uint16_t playerId) noexcept
 {
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
 	PlayerStore::playerMutex[playerId].unlock_shared();
 }
 
 PlayerInfo* PlayerStore::RequestPlayerWithUniqueAccess(const uint16_t playerId) noexcept
 {
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
 	PlayerStore::playerMutex[playerId].lock();
 
@@ -106,10 +104,10 @@ PlayerInfo* PlayerStore::RequestPlayerWithUniqueAccess(const uint16_t playerId) 
 
 void PlayerStore::ReleasePlayerWithUniqueAccess(const uint16_t playerId) noexcept
 {
-	assert(playerId >= 0 && playerId < MAX_PLAYERS);
+	assert(playerId >= 0 && playerId < PLAYER_POOL_SIZE);
 
 	PlayerStore::playerMutex[playerId].unlock();
 }
 
-std::array<std::shared_mutex, MAX_PLAYERS> PlayerStore::playerMutex;
-std::array<std::atomic<PlayerInfo*>, MAX_PLAYERS> PlayerStore::playerInfo{};
+std::array<std::shared_mutex, PLAYER_POOL_SIZE> PlayerStore::playerMutex;
+std::array<std::atomic<PlayerInfo*>, PLAYER_POOL_SIZE> PlayerStore::playerInfo{};

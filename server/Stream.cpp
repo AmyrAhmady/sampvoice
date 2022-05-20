@@ -11,8 +11,6 @@
 
 #include <cassert>
 
-#include <ysf/globals.h>
-
 #include "Network.h"
 #include "PlayerStore.h"
 #include "Header.h"
@@ -34,10 +32,10 @@ Stream::~Stream() noexcept
 
 void Stream::SendVoicePacket(VoicePacket& voicePacket) const
 {
-	assert(pNetGame != nullptr);
-	assert(pNetGame->pPlayerPool != nullptr);
+	assert(SampVoiceComponent::instance != nullptr);
+	assert(SampVoiceComponent::GetPlayers() != nullptr);
 
-	assert(voicePacket.sender >= 0 && voicePacket.sender < MAX_PLAYERS);
+	assert(voicePacket.sender >= 0 && voicePacket.sender < PLAYER_POOL_SIZE);
 
 	if (!this->HasSpeaker(voicePacket.sender))
 		return;
@@ -45,38 +43,30 @@ void Stream::SendVoicePacket(VoicePacket& voicePacket) const
 	voicePacket.stream = reinterpret_cast<uint32_t>(this);
 	voicePacket.CalcHash();
 
-	if (pNetGame->pPlayerPool->dwConnectedPlayers != 0)
+	IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+	for (IPlayer* player : playerPool->entries())
 	{
-		const auto playerPoolSize = pNetGame->pPlayerPool->dwPlayerPoolSize;
-
-		for (uint16_t iPlayerId{ 0 }; iPlayerId <= playerPoolSize; ++iPlayerId)
-		{
-			if (this->HasListener(iPlayerId) && PlayerStore::IsPlayerConnected(iPlayerId) && iPlayerId != voicePacket.sender)
-				Network::SendVoicePacket(iPlayerId, voicePacket);
-		}
+		if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()) && player->getID() != voicePacket.sender)
+			Network::SendVoicePacket(player->getID(), voicePacket);
 	}
 }
 
 void Stream::SendControlPacket(ControlPacket& controlPacket) const
 {
-	assert(pNetGame != nullptr);
-	assert(pNetGame->pPlayerPool != nullptr);
+	assert(SampVoiceComponent::instance != nullptr);
+	assert(SampVoiceComponent::GetPlayers() != nullptr);
 
-	if (pNetGame->pPlayerPool->dwConnectedPlayers != 0)
+	IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+	for (IPlayer* player : playerPool->entries())
 	{
-		const auto playerPoolSize = pNetGame->pPlayerPool->dwPlayerPoolSize;
-
-		for (uint16_t iPlayerId{ 0 }; iPlayerId <= playerPoolSize; ++iPlayerId)
-		{
-			if (this->HasListener(iPlayerId) && PlayerStore::IsPlayerConnected(iPlayerId))
-				Network::SendControlPacket(iPlayerId, controlPacket);
-		}
+		if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()))
+			Network::SendControlPacket(player->getID(), controlPacket);
 	}
 }
 
 bool Stream::AttachListener(const uint16_t playerId)
 {
-	assert(playerId < MAX_PLAYERS);
+	assert(playerId < PLAYER_POOL_SIZE);
 
 	if (!PlayerStore::IsPlayerHasPlugin(playerId)) return false;
 	if (this->attachedListeners[playerId].exchange(true, std::memory_order_relaxed))
@@ -96,14 +86,14 @@ bool Stream::AttachListener(const uint16_t playerId)
 
 bool Stream::HasListener(const uint16_t playerId) const noexcept
 {
-	assert(playerId < MAX_PLAYERS);
+	assert(playerId < PLAYER_POOL_SIZE);
 
 	return this->attachedListeners[playerId].load(std::memory_order_relaxed);
 }
 
 bool Stream::DetachListener(const uint16_t playerId)
 {
-	assert(playerId < MAX_PLAYERS);
+	assert(playerId < PLAYER_POOL_SIZE);
 
 	if (!this->attachedListeners[playerId].exchange(false, std::memory_order_relaxed))
 		return false;
@@ -122,7 +112,7 @@ std::vector<uint16_t> Stream::DetachAllListeners()
 
 	detachedListeners.reserve(this->attachedListenersCount);
 
-	for (uint16_t iPlayerId{ 0 }; iPlayerId < MAX_PLAYERS; ++iPlayerId)
+	for (uint16_t iPlayerId{ 0 }; iPlayerId < PLAYER_POOL_SIZE; ++iPlayerId)
 	{
 		if (this->attachedListeners[iPlayerId].exchange(false, std::memory_order_relaxed))
 		{
@@ -140,7 +130,7 @@ std::vector<uint16_t> Stream::DetachAllListeners()
 
 bool Stream::AttachSpeaker(const uint16_t playerId) noexcept
 {
-	assert(playerId < MAX_PLAYERS);
+	assert(playerId < PLAYER_POOL_SIZE);
 
 	if (!PlayerStore::IsPlayerHasPlugin(playerId)) return false;
 	if (this->attachedSpeakers[playerId].exchange(true, std::memory_order_relaxed))
@@ -153,14 +143,14 @@ bool Stream::AttachSpeaker(const uint16_t playerId) noexcept
 
 bool Stream::HasSpeaker(const uint16_t playerId) const noexcept
 {
-	assert(playerId < MAX_PLAYERS);
+	assert(playerId < PLAYER_POOL_SIZE);
 
 	return this->attachedSpeakers[playerId].load(std::memory_order_relaxed);
 }
 
 bool Stream::DetachSpeaker(const uint16_t playerId) noexcept
 {
-	assert(playerId < MAX_PLAYERS);
+	assert(playerId < PLAYER_POOL_SIZE);
 
 	if (!this->attachedSpeakers[playerId].exchange(false, std::memory_order_relaxed))
 		return false;
@@ -176,7 +166,7 @@ std::vector<uint16_t> Stream::DetachAllSpeakers()
 
 	detachedSpeakers.reserve(this->attachedSpeakersCount);
 
-	for (uint16_t iPlayerId{ 0 }; iPlayerId < MAX_PLAYERS; ++iPlayerId)
+	for (uint16_t iPlayerId{ 0 }; iPlayerId < PLAYER_POOL_SIZE; ++iPlayerId)
 	{
 		if (this->attachedSpeakers[iPlayerId].exchange(false, std::memory_order_relaxed))
 			detachedSpeakers.emplace_back(iPlayerId);
@@ -210,8 +200,8 @@ void Stream::SetParameter(const uint8_t parameter, const float value) noexcept
 
 void Stream::ResetParameter(const uint8_t parameter) noexcept
 {
-	assert(pNetGame != nullptr);
-	assert(pNetGame->pPlayerPool != nullptr);
+	assert(SampVoiceComponent::instance != nullptr);
+	assert(SampVoiceComponent::GetPlayers() != nullptr);
 
 	const auto valueIter = kDefaultValues.find(parameter);
 	if (valueIter == kDefaultValues.end()) return;
@@ -221,15 +211,11 @@ void Stream::ResetParameter(const uint8_t parameter) noexcept
 	{
 		iter->second.Set(valueIter->second);
 
-		if (pNetGame->pPlayerPool->dwConnectedPlayers != 0)
+		IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+		for (IPlayer* player : playerPool->entries())
 		{
-			const auto playerPoolSize = pNetGame->pPlayerPool->dwPlayerPoolSize;
-
-			for (uint16_t iPlayerId{ 0 }; iPlayerId <= playerPoolSize; ++iPlayerId)
-			{
-				if (this->HasListener(iPlayerId) && PlayerStore::IsPlayerConnected(iPlayerId))
-					iter->second.ApplyForPlayer(iPlayerId);
-			}
+			if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()))
+				iter->second.ApplyForPlayer(player->getID());
 		}
 
 		this->parameters.erase(iter);

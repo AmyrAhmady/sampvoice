@@ -11,8 +11,6 @@
 
 #include <cassert>
 
-#include <ysf/globals.h>
-
 #include "Network.h"
 #include "PlayerStore.h"
 #include "Header.h"
@@ -27,19 +25,15 @@ LocalStream::LocalStream(const float distance)
 
 void LocalStream::UpdateDistance(const float distance)
 {
-	assert(pNetGame != nullptr);
-	assert(pNetGame->pPlayerPool != nullptr);
+	assert(SampVoiceComponent::instance != nullptr);
+	assert(SampVoiceComponent::GetPlayers() != nullptr);
 
 	PackGetStruct(&*this->packetStreamUpdateDistance, SV::UpdateLStreamDistancePacket)->distance = distance;
 
-	if (pNetGame->pPlayerPool->dwConnectedPlayers != 0)
+	IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+	for (IPlayer* player : playerPool->entries())
 	{
-		const auto playerPoolSize = pNetGame->pPlayerPool->dwPlayerPoolSize;
-
-		for (uint16_t iPlayerId{ 0 }; iPlayerId <= playerPoolSize; ++iPlayerId)
-		{
-			if (this->HasListener(iPlayerId) && PlayerStore::IsPlayerConnected(iPlayerId))
-				Network::SendControlPacket(iPlayerId, *&*this->packetStreamUpdateDistance);
-		}
+		if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()))
+			Network::SendControlPacket(player->getID(), *&*this->packetStreamUpdateDistance);
 	}
 }

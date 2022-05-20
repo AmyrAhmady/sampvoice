@@ -76,7 +76,7 @@ private:
 	static std::vector<PacketCallback> packetCallbacks;
 	static std::vector<DisconnectCallback> disconnectCallbacks;
 
-	static std::array<bool, MAX_PLAYERS> playerStatus;
+	static std::array<bool, PLAYER_POOL_SIZE> playerStatus;
 
 	static RPCFunction origConnectHandler;
 
