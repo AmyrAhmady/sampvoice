@@ -3,7 +3,7 @@
 #include <functional>
 
 #include "Stream.h"
-#include "Network.h"
+#include "NetHandler.h"
 #include "Header.h"
 
 Effect::~Effect()
@@ -86,7 +86,7 @@ void Effect::PlayerCallback(Stream* const stream, const uint16_t player)
 	PackGetStruct(&*this->packetCreateEffect, SV::CreateEffectPacket)->stream
 		= reinterpret_cast<uint32_t>(stream);
 
-	Network::SendControlPacket(player, *&*this->packetCreateEffect);
+	NetHandler::SendControlPacket(player, *&*this->packetCreateEffect);
 }
 
 void Effect::DeleteCallback(Stream* const stream)

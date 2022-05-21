@@ -13,7 +13,7 @@
 #include <memory>
 #include <thread>
 
-#include "Network.h"
+#include "NetHandler.h"
 #include "VoicePacket.h"
 #include "PlayerStore.h"
 #include "Header.h"
@@ -46,7 +46,7 @@ private:
 	{
 		while (status->load(std::memory_order_relaxed))
 		{
-			const auto voicePacket = Network::ReceiveVoicePacket();
+			const auto voicePacket = NetHandler::ReceiveVoicePacket();
 			if (voicePacket == nullptr) continue;
 
 			auto& voicePacketRef = *voicePacket;

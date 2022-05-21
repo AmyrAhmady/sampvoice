@@ -3,7 +3,7 @@
 #include <functional>
 
 #include "Header.h"
-#include "Network.h"
+#include "NetHandler.h"
 #include "Stream.h"
 
 Parameter::Parameter(Stream* const stream, const uint8_t parameter, const float initValue)
@@ -86,5 +86,5 @@ void Parameter::ApplyForPlayer(const uint16_t player) const
 		? this->packetSlideParameter
 		: this->packetSetParameter;
 
-	Network::SendControlPacket(player, *&*activePacketRef);
+	NetHandler::SendControlPacket(player, *&*activePacketRef);
 }

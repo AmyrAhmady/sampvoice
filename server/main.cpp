@@ -15,7 +15,7 @@
 #include "VoicePacket.h"
 
 #include "Pawn.h"
-#include "Network.h"
+#include "NetHandler.h"
 #include "PlayerStore.h"
 #include "Worker.h"
 
@@ -101,7 +101,7 @@ namespace SV
 
 			PackAlloca(controlPacket, SV::ControlPacketType::startRecord, NULL);
 
-			return Network::SendControlPacket(playerId, *controlPacket);
+			return NetHandler::SendControlPacket(playerId, *controlPacket);
 		}
 
 		bool SvStopRecord(const uint16_t playerId) override
@@ -118,7 +118,7 @@ namespace SV
 
 			PackAlloca(controlPacket, SV::ControlPacketType::stopRecord, NULL);
 
-			return Network::SendControlPacket(playerId, *controlPacket);
+			return NetHandler::SendControlPacket(playerId, *controlPacket);
 		}
 
 		// -------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ namespace SV
 			PackAlloca(controlPacket, SV::ControlPacketType::addKey, sizeof(SV::AddKeyPacket));
 			PackGetStruct(controlPacket, SV::AddKeyPacket)->keyId = keyId;
 
-			return Network::SendControlPacket(playerId, *controlPacket);
+			return NetHandler::SendControlPacket(playerId, *controlPacket);
 		}
 
 		bool SvHasKey(const uint16_t playerId, const uint8_t keyId) override
@@ -167,7 +167,7 @@ namespace SV
 			PackAlloca(controlPacket, SV::ControlPacketType::removeKey, sizeof(SV::RemoveKeyPacket));
 			PackGetStruct(controlPacket, SV::RemoveKeyPacket)->keyId = keyId;
 
-			return Network::SendControlPacket(playerId, *controlPacket);
+			return NetHandler::SendControlPacket(playerId, *controlPacket);
 		}
 
 		void SvRemoveAllKeys(const uint16_t playerId) override
@@ -182,7 +182,7 @@ namespace SV
 
 			PackAlloca(controlPacket, SV::ControlPacketType::removeAllKeys, NULL);
 
-			Network::SendControlPacket(playerId, *controlPacket);
+			NetHandler::SendControlPacket(playerId, *controlPacket);
 		}
 
 		// -------------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ namespace SV
 
 			PackAlloca(controlPacket, SV::ControlPacketType::muteEnable, NULL);
 
-			Network::SendControlPacket(playerId, *controlPacket);
+			NetHandler::SendControlPacket(playerId, *controlPacket);
 		}
 
 		void SvMutePlayerDisable(const uint16_t playerId) override
@@ -229,7 +229,7 @@ namespace SV
 
 			PackAlloca(controlPacket, SV::ControlPacketType::muteDisable, NULL);
 
-			Network::SendControlPacket(playerId, *controlPacket);
+			NetHandler::SendControlPacket(playerId, *controlPacket);
 		}
 
 		// -------------------------------------------------------------------------------------
@@ -634,7 +634,7 @@ namespace SV
 
 		uint16_t senderId{ SV::kNonePlayer };
 
-		while (const auto controlPacket = Network::ReceiveControlPacket(senderId))
+		while (const auto controlPacket = NetHandler::ReceiveControlPacket(senderId))
 		{
 			const auto& controlPacketRef = *controlPacket;
 
@@ -675,7 +675,7 @@ namespace SV
 			}
 		}
 
-		Network::Process();
+		NetHandler::Process();
 	}
 }
 
@@ -731,7 +731,7 @@ void SampVoiceComponent::onInit(IComponentList* components)
 		return;
 	}
 
-	if (!Network::Init(ompCore))
+	if (!NetHandler::Init(ompCore))
 	{
 		ompCore->logLn(LogLevel::Error, "[sv:err:main:Load] : failed to init network");
 		Logger::Free();
@@ -741,21 +741,27 @@ void SampVoiceComponent::onInit(IComponentList* components)
 	// add event handlers
 	pawnComponent->getEventDispatcher().addEventHandler(this);
 	ompCore->getEventDispatcher().addEventHandler(this);
-	players->getEventDispatcher().addEventHandler(this);
+	players->getEventDispatcher().addEventHandler(NetHandler::GetOmpNet());
 	pAMXFunctions = (void*)&pawnComponent->getAmxFunctions();
+
+	for (auto network : ompCore->getNetworks())
+	{
+		network->getInEventDispatcher().addEventHandler(NetHandler::GetOmpNet());
+		network->getOutEventDispatcher().addEventHandler(NetHandler::GetOmpNet());
+	}
 
 #ifdef _WIN32
 	SetConsoleCtrlHandler(&WinExitHandler, TRUE);
 #endif
 
-	Network::AddConnectCallback(SV::ConnectHandler);
-	Network::AddPlayerInitCallback(SV::PlayerInitHandler);
-	Network::AddDisconnectCallback(SV::DisconnectHandler);
+	NetHandler::AddConnectCallback(SV::ConnectHandler);
+	NetHandler::AddPlayerInitCallback(SV::PlayerInitHandler);
+	NetHandler::AddDisconnectCallback(SV::DisconnectHandler);
 
 	if (!Pawn::Init(std::make_unique<SV::PawnHandler>()))
 	{
 		Logger::Log("[sv:err:main:Load] : failed to init pawn");
-		Network::Free();
+		NetHandler::Free();
 		Logger::Free();
 		exit(0);
 	}
@@ -791,7 +797,7 @@ void SampVoiceComponent::onTick(Microseconds elapsed, TimePoint now)
 
 void SampVoiceComponent::onAmxLoad(void* amx)
 {
-	if (!Network::Bind()) Logger::Log("[sv:dbg:main:AmxLoad] : failed to bind voice server");
+	if (!NetHandler::Bind()) Logger::Log("[sv:dbg:main:AmxLoad] : failed to bind voice server");
 
 	Pawn::RegisterScript(static_cast<AMX*>(amx));
 }
@@ -807,6 +813,20 @@ void SampVoiceComponent::onFree(IComponent* component)
 		if (unloadStatus) return;
 		unloadStatus = true;
 
+		if (pawnComponent != nullptr)
+		{
+			pawnComponent->getEventDispatcher().removeEventHandler(this);
+		}
+
+		ompCore->getEventDispatcher().removeEventHandler(this);
+		players->getEventDispatcher().removeEventHandler(NetHandler::GetOmpNet());
+
+		for (auto network : ompCore->getNetworks())
+		{
+			network->getInEventDispatcher().removeEventHandler(NetHandler::GetOmpNet());
+			network->getOutEventDispatcher().removeEventHandler(NetHandler::GetOmpNet());
+		}
+
 		Logger::Log(" -------------------------------------------");
 		Logger::Log("           SampVoice unloading...           ");
 		Logger::Log(" -------------------------------------------");
@@ -816,8 +836,7 @@ void SampVoiceComponent::onFree(IComponent* component)
 		PlayerStore::ClearStore();
 
 		Pawn::Free();
-		RakNet::Free();
-		Network::Free();
+		NetHandler::Free();
 		Logger::Free();
 	}
 }

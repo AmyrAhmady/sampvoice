@@ -13,7 +13,7 @@
 
 #include "sdk.hpp"
 
-#include "Network.h"
+#include "NetHandler.h"
 #include "PlayerStore.h"
 #include "Header.h"
 
@@ -36,6 +36,6 @@ void PointStream::UpdatePosition(const Vector3& position)
 	for (IPlayer* player : playerPool->entries())
 	{
 		if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()))
-			Network::SendControlPacket(player->getID(), *&*this->packetStreamUpdatePosition);
+			NetHandler::SendControlPacket(player->getID(), *&*this->packetStreamUpdatePosition);
 	}
 }

@@ -27,7 +27,7 @@
 #endif
 
 #include <SPSCQueue.h>
-#include <util/raknet.h>
+#include <util/ompnet.h>
 #include <util/timer.h>
 #include <map>
 
@@ -35,14 +35,14 @@
 #include "VoicePacket.h"
 #include "Header.h"
 
-class Network {
+class NetHandler {
 
-	Network() = delete;
-	~Network() = delete;
-	Network(const Network&) = delete;
-	Network(Network&&) = delete;
-	Network& operator=(const Network&) = delete;
-	Network& operator=(Network&&) = delete;
+	NetHandler() = delete;
+	~NetHandler() = delete;
+	NetHandler(const NetHandler&) = delete;
+	NetHandler(NetHandler&&) = delete;
+	NetHandler& operator=(const NetHandler&) = delete;
+	NetHandler& operator=(NetHandler&&) = delete;
 
 private:
 
@@ -67,6 +67,8 @@ public:
 	static bool Bind() noexcept;
 	static void Process() noexcept;
 
+	static OmpNet* GetOmpNet() { return ompNet; }
+
 	static bool SendControlPacket(uint16_t playerId, const ControlPacket& controlPacket);
 	static bool SendVoicePacket(uint16_t playerId, const VoicePacket& voicePacket);
 	static ControlPacketContainerPtr ReceiveControlPacket(uint16_t& sender) noexcept;
@@ -81,14 +83,16 @@ public:
 
 private:
 
-	static bool ConnectHandler(uint16_t playerId, RPCParameters& rpc);
-	static bool PacketHandler(uint16_t playerId, Packet& packet);
+	static bool ConnectHandler(uint16_t playerId, NetworkBitStream& bs);
+	static bool PacketHandler(uint16_t playerId, NetworkBitStream& bs);
 	static void DisconnectHandler(uint16_t playerId);
 
 private:
 
 	static bool initStatus;
 	static bool bindStatus;
+
+	static OmpNet* ompNet;
 
 	static SOCKET socketHandle;
 	static uint16_t serverPort;

@@ -215,10 +215,17 @@ namespace SV {
 #pragma pack(pop)
 }
 
-class SampVoiceComponent final : public IComponent, public CoreEventHandler, public PawnEventHandler, public PlayerEventHandler
+#include "NetHandler.h"
+
+class SampVoiceComponent final : public IComponent, public CoreEventHandler, public PawnEventHandler
 {
 public:
 	PROVIDE_UID(0x6f7d8cbde58c9ce9);
+
+	enum class NetworkID : int {
+		RPC_PlayerConnect = 25,
+		Packet_Control = 222
+	};
 
 	static SampVoiceComponent* instance;
 
@@ -253,13 +260,8 @@ public:
 		// Fire events here at earliest
 	}
 
-	void free() override {
-		if (pawnComponent != nullptr)
-		{
-			pawnComponent->getEventDispatcher().removeEventHandler(this);
-			ompCore->getEventDispatcher().removeEventHandler(this);
-			players->getEventDispatcher().removeEventHandler(this);
-		}
+	void free() override
+	{
 		delete this;
 	}
 

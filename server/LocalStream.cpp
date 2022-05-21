@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-#include "Network.h"
+#include "NetHandler.h"
 #include "PlayerStore.h"
 #include "Header.h"
 
@@ -34,6 +34,6 @@ void LocalStream::UpdateDistance(const float distance)
 	for (IPlayer* player : playerPool->entries())
 	{
 		if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()))
-			Network::SendControlPacket(player->getID(), *&*this->packetStreamUpdateDistance);
+			NetHandler::SendControlPacket(player->getID(), *&*this->packetStreamUpdateDistance);
 	}
 }

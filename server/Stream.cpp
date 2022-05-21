@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-#include "Network.h"
+#include "NetHandler.h"
 #include "PlayerStore.h"
 #include "Header.h"
 
@@ -47,7 +47,7 @@ void Stream::SendVoicePacket(VoicePacket& voicePacket) const
 	for (IPlayer* player : playerPool->entries())
 	{
 		if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()) && player->getID() != voicePacket.sender)
-			Network::SendVoicePacket(player->getID(), voicePacket);
+			NetHandler::SendVoicePacket(player->getID(), voicePacket);
 	}
 }
 
@@ -60,7 +60,7 @@ void Stream::SendControlPacket(ControlPacket& controlPacket) const
 	for (IPlayer* player : playerPool->entries())
 	{
 		if (this->HasListener(player->getID()) && PlayerStore::IsPlayerConnected(player->getID()))
-			Network::SendControlPacket(player->getID(), controlPacket);
+			NetHandler::SendControlPacket(player->getID(), controlPacket);
 	}
 }
 
@@ -72,7 +72,7 @@ bool Stream::AttachListener(const uint16_t playerId)
 	if (this->attachedListeners[playerId].exchange(true, std::memory_order_relaxed))
 		return false;
 
-	Network::SendControlPacket(playerId, *&*this->packetCreateStream);
+	NetHandler::SendControlPacket(playerId, *&*this->packetCreateStream);
 
 	for (const auto& playerCallback : this->playerCallbacks)
 	{
@@ -99,7 +99,7 @@ bool Stream::DetachListener(const uint16_t playerId)
 		return false;
 
 	if (PlayerStore::IsPlayerConnected(playerId) && this->packetDeleteStream)
-		Network::SendControlPacket(playerId, *&*this->packetDeleteStream);
+		NetHandler::SendControlPacket(playerId, *&*this->packetDeleteStream);
 
 	--this->attachedListenersCount;
 
@@ -117,7 +117,7 @@ std::vector<uint16_t> Stream::DetachAllListeners()
 		if (this->attachedListeners[iPlayerId].exchange(false, std::memory_order_relaxed))
 		{
 			if (PlayerStore::IsPlayerConnected(iPlayerId) && this->packetDeleteStream)
-				Network::SendControlPacket(iPlayerId, *&*this->packetDeleteStream);
+				NetHandler::SendControlPacket(iPlayerId, *&*this->packetDeleteStream);
 
 			detachedListeners.emplace_back(iPlayerId);
 		}
