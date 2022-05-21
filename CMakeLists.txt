@@ -4,4 +4,5 @@ project(sampvoice-server)
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(lib/omp-sdk)
+add_subdirectory(lib/omp-netcode)
 add_subdirectory(server)

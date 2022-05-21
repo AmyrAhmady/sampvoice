@@ -15,6 +15,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	OMP-SDK
+	NetCode
 )
 
 if(UNIX AND NOT APPLE)
