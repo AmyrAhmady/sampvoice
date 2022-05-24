@@ -280,6 +280,17 @@ public:
 	static void OnPlayerActivationKeyPressForAll(uint16_t playerid, uint8_t keyid) noexcept;
 	static void OnPlayerActivationKeyReleaseForAll(uint16_t playerid, uint8_t keyid) noexcept;
 
+	template<class... ARGS>
+	static cell CallAmxCallback(AMX* amx, int idx, ARGS... args) noexcept
+	{
+		cell returnValue{ NULL };
+
+		(amx_Push(amx, static_cast<cell>(args)), ...);
+		amx_Exec(amx, &returnValue, idx);
+
+		return returnValue;
+	}
+
 private:
 
 	static cell AMX_NATIVE_CALL n_SvDebug(AMX* amx, cell* params);
@@ -343,43 +354,6 @@ private:
 
 private:
 
-	class AmxCallback {
-	public:
-
-		AmxCallback() = delete;
-		AmxCallback(const AmxCallback&) noexcept = default;
-		AmxCallback(AmxCallback&&) noexcept = default;
-		AmxCallback& operator=(const AmxCallback&) noexcept = default;
-		AmxCallback& operator=(AmxCallback&&) noexcept = default;
-
-	public:
-
-		explicit AmxCallback(AMX* amx, int index) noexcept
-			: amx(amx), index(index) {}
-
-		~AmxCallback() noexcept = default;
-
-	public:
-
-		template<class... ARGS>
-		cell Call(ARGS... args) const noexcept
-		{
-			cell returnValue{ NULL };
-
-			(amx_Push(this->amx, static_cast<cell>(args)), ...);
-			amx_Exec(this->amx, &returnValue, this->index);
-
-			return returnValue;
-		}
-
-	private:
-
-		AMX* amx{ nullptr };
-		int index{ -1 };
-
-	};
-
-	static std::vector<AmxCallback> callbacksOnPlayerActivationKeyPress;
-	static std::vector<AmxCallback> callbacksOnPlayerActivationKeyRelease;
+	static std::vector<AMX*> scripts;
 
 };

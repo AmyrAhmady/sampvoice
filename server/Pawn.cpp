@@ -25,8 +25,7 @@ void Pawn::Free() noexcept
 
 	Pawn::debugStatus = false;
 
-	Pawn::callbacksOnPlayerActivationKeyPress.clear();
-	Pawn::callbacksOnPlayerActivationKeyRelease.clear();
+	Pawn::scripts.clear();
 
 	Logger::LogToFile("[sv:dbg:pawn:free] : module released");
 
@@ -102,39 +101,36 @@ void Pawn::RegisterScript(AMX* const amx)
 
 	amx_Register(amx, nativesList, SizeOfArray(nativesList));
 
-	int tmpIndex{ -1 };
-
-	Logger::LogToFile("[sv:dbg:pawn:register] : finding 'OnPlayerActivationKeyPress' callback function...");
-
-	if (amx_FindPublic(amx, "OnPlayerActivationKeyPress", &tmpIndex) == 0 && tmpIndex >= 0)
-	{
-		Logger::LogToFile("[sv:dbg:pawn:register] : finded 'OnPlayerActivationKeyPress' callback function (index:%d)", tmpIndex);
-		Pawn::callbacksOnPlayerActivationKeyPress.emplace_back(amx, tmpIndex);
-	}
-
-	Logger::LogToFile("[sv:dbg:pawn:register] : finding 'OnPlayerActivationKeyRelease' callback function...");
-
-	if (amx_FindPublic(amx, "OnPlayerActivationKeyRelease", &tmpIndex) == 0 && tmpIndex >= 0)
-	{
-		Logger::LogToFile("[sv:dbg:pawn:register] : finded 'OnPlayerActivationKeyRelease' callback function (index:%d)", tmpIndex);
-		Pawn::callbacksOnPlayerActivationKeyRelease.emplace_back(amx, tmpIndex);
-	}
+	Pawn::scripts.emplace_back(amx);
 }
 
 void Pawn::OnPlayerActivationKeyPressForAll(const uint16_t playerid, const uint8_t keyid) noexcept
 {
 	if (Pawn::pInterface == nullptr) return;
 
-	for (const auto& iCallback : Pawn::callbacksOnPlayerActivationKeyPress)
-		iCallback.Call(keyid, playerid);
+
+	for (const auto& script : Pawn::scripts)
+	{
+		int tmpIndex{ -1 };
+		if (amx_FindPublic(script, "OnPlayerActivationKeyPress", &tmpIndex) == 0 && tmpIndex >= 0)
+		{
+			Pawn::CallAmxCallback(script, tmpIndex, keyid, playerid);
+		}
+	}
 }
 
 void Pawn::OnPlayerActivationKeyReleaseForAll(const uint16_t playerid, const uint8_t keyid) noexcept
 {
 	if (Pawn::pInterface == nullptr) return;
 
-	for (const auto& iCallback : Pawn::callbacksOnPlayerActivationKeyRelease)
-		iCallback.Call(keyid, playerid);
+	for (const auto& script : Pawn::scripts)
+	{
+		int tmpIndex{ -1 };
+		if (amx_FindPublic(script, "OnPlayerActivationKeyRelease", &tmpIndex) == 0 && tmpIndex >= 0)
+		{
+			Pawn::CallAmxCallback(script, tmpIndex, keyid, playerid);
+		}
+	}
 }
 
 cell AMX_NATIVE_CALL Pawn::n_SvDebug(AMX* const amx, cell* const params)
@@ -1214,5 +1210,4 @@ bool Pawn::debugStatus{ false };
 
 PawnInterfacePtr Pawn::pInterface{ nullptr };
 
-std::vector<Pawn::AmxCallback> Pawn::callbacksOnPlayerActivationKeyPress;
-std::vector<Pawn::AmxCallback> Pawn::callbacksOnPlayerActivationKeyRelease;
+std::vector<AMX*> Pawn::scripts;
