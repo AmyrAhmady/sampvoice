@@ -799,7 +799,7 @@ void SampVoiceComponent::onAmxLoad(void* amx)
 {
 	if (!NetHandler::Bind()) Logger::Log("[sv:dbg:main:AmxLoad] : failed to bind voice server");
 
-	Pawn::RegisterScript(static_cast<AMX*>(amx));
+	Pawn::RegisterScript((AMX*)amx);
 }
 
 void SampVoiceComponent::onFree(IComponent* component)
