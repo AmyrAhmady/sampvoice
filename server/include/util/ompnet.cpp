@@ -256,15 +256,16 @@ void OmpNet::RemoveDisconnectCallback(const std::size_t callback) noexcept
 
 bool OmpNet::onReceivePacket(IPlayer& peer, int id, NetworkBitStream& bs)
 {
-	bool breakStatus{ true };
-
-	for (const auto& packetCallback : OmpNet::packetCallbacks)
+	if (id == int(SampVoiceComponent::NetworkID::Packet_Control))
 	{
-		if (packetCallback != nullptr && !packetCallback(peer.getID(), bs))
-			breakStatus = false;
+		for (const auto& packetCallback : OmpNet::packetCallbacks)
+		{
+			if (packetCallback != nullptr)
+			{
+				packetCallback(peer.getID(), bs);
+			}
+		}
 	}
-
-	if (breakStatus) return false;
 	return true;
 }
 

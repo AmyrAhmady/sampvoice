@@ -503,11 +503,10 @@ bool NetHandler::PacketHandler(const uint16_t playerId, NetworkBitStream& bs)
 {
 	if (!NetHandler::initStatus) return true;
 
-	if (bs.GetNumberOfBytesUsed() < sizeof(uint8_t) + sizeof(ControlPacket)) return true;
-	if (*bs.GetData() != NetHandler::kRaknetPacketId) return true;
+	if (bs.GetNumberOfBytesUsed() < sizeof(ControlPacket)) return true;
 
-	const auto controlPacketPtr = (ControlPacket*)(bs.GetData() + sizeof(uint8_t));
-	const auto controlPacketSize = bs.GetNumberOfBytesUsed() - sizeof(uint8_t);
+	const auto controlPacketPtr = (ControlPacket*)(bs.GetData());
+	const auto controlPacketSize = bs.GetNumberOfBytesUsed();
 
 	if (controlPacketSize != controlPacketPtr->GetFullSize()) return false;
 
