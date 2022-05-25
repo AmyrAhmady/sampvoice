@@ -445,7 +445,7 @@ bool NetHandler::ConnectHandler(const uint16_t playerId, NetworkBitStream& bs)
 		return true;
 
 	IPlayer* player = SampVoiceComponent::GetPlayers()->get(playerId);
-	if (player)
+	if (player == nullptr)
 		return true;
 
 	const uint32_t playerAddr = player->getNetworkData().networkID.address.v4;
