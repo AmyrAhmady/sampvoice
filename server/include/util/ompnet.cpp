@@ -20,7 +20,7 @@ bool OmpNet::Init(ICore* core) noexcept
 
 	Logger::Log("[dbg:raknet:init] : module initializing...");
 	OmpNet::ompCore = core;
-	OmpNet::loadStatus = false;
+	OmpNet::loadStatus = true;
 
 	Logger::Log("[dbg:raknet:init] : module initialized");
 
