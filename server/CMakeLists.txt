@@ -1,3 +1,7 @@
+project(sampvoice-server)
+
+set(CMAKE_CXX_STANDARD 17)
+
 file(GLOB_RECURSE sampvoice_source_list "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.c" "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
 add_library(${PROJECT_NAME} SHARED ${sampvoice_source_list})
@@ -21,3 +25,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 if(UNIX AND NOT APPLE)
 	add_compile_definitions(LINUX)
 endif()
+
+GroupSourcesByFolder(${PROJECT_NAME})
