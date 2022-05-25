@@ -19,7 +19,7 @@
 #include "sdk.hpp"
 
 #define SleepForMilliseconds(mscount) (std::this_thread::sleep_for(std::chrono::milliseconds(mscount)))
-static void* pAMXFunctions;
+extern void* pAMXFunctions;
 
 namespace SV {
 	// Constants
