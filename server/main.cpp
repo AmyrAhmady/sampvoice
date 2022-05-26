@@ -843,4 +843,42 @@ void SampVoiceComponent::onFree(IComponent* component)
 	}
 }
 
+int SampVoiceComponent::GetSampVoiceConfigInt(StringView key) const
+{
+	uint16_t value = 0;
+	if (ompCore)
+	{
+		int* ompConfigValue = ompCore->getConfig().getInt(key);
+
+		if (ompConfigValue == 0 || *ompConfigValue == 0)
+		{
+			try
+			{
+				std::ifstream file("server.cfg");
+				if (file.is_open())
+				{
+					std::string line;
+					while (std::getline(file, line))
+					{
+						if (line.find(Impl::String(key)) == 0)
+						{
+							value = atoi(line.substr(key.length() + 1).c_str());
+						}
+					}
+					file.close();
+				}
+			}
+			catch (...)
+			{
+				value = 0;
+			}
+		}
+		else
+		{
+			value = *ompConfigValue;
+		}
+	}
+	return value;
+}
+
 COMPONENT_ENTRY_POINT() { return new SampVoiceComponent(); }

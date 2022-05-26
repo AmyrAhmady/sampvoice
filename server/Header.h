@@ -255,6 +255,7 @@ public:
 	void onAmxUnload(void* amx) override { };
 	void onFree(IComponent* component) override;
 	void reset() override {}
+	int GetSampVoiceConfigInt(StringView key) const;
 
 	void onReady() override
 	{

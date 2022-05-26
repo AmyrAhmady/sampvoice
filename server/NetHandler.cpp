@@ -53,6 +53,8 @@ bool NetHandler::Init(ICore* ompCore) noexcept
 
 	ompNet = new OmpNet();
 
+	NetHandler::ompCore = ompCore;
+
 	if (!ompNet->Init(ompCore))
 	{
 		Logger::Log("[sv:err:network:init] : failed to init raknet");
@@ -157,9 +159,19 @@ bool NetHandler::Bind() noexcept
 	{
 		sockaddr_in bindAddr{};
 
+		int _port = SampVoiceComponent::instance ? SampVoiceComponent::instance->GetSampVoiceConfigInt("sampvoice.port") : NULL;
+
 		bindAddr.sin_family = AF_INET;
 		bindAddr.sin_addr.s_addr = INADDR_ANY;
-		bindAddr.sin_port = NULL;
+
+		if (_port == NULL)
+		{
+			bindAddr.sin_port = NULL;
+		}
+		else
+		{
+			bindAddr.sin_port = htons(uint16_t(_port));
+		}
 
 		if (bind(NetHandler::socketHandle, (sockaddr*)(&bindAddr), sizeof(bindAddr)) == SOCKET_ERROR)
 		{
@@ -545,6 +557,7 @@ bool NetHandler::initStatus{ false };
 bool NetHandler::bindStatus{ false };
 
 OmpNet* NetHandler::ompNet = nullptr;
+ICore* NetHandler::ompCore = nullptr;
 
 SOCKET NetHandler::socketHandle{ NULL };
 uint16_t NetHandler::serverPort{ NULL };

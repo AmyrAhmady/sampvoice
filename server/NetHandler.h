@@ -94,6 +94,7 @@ private:
 	static bool bindStatus;
 
 	static OmpNet* ompNet;
+	static ICore* ompCore;
 
 	static SOCKET socketHandle;
 	static uint16_t serverPort;
