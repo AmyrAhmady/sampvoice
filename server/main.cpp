@@ -768,10 +768,10 @@ void SampVoiceComponent::onInit(IComponentList* components)
 	}
 
 	{
-		auto nprocs = std::thread::hardware_concurrency();
+		uint32_t nprocs = GetSampVoiceConfigInt("sampvoice.threads");
 
-		if (!nprocs || nprocs > SV::kVoiceThreadsCount)
-			nprocs = SV::kVoiceThreadsCount;
+		if (!nprocs || nprocs > SV::kDefaultVoiceThreadsCount)
+			nprocs = SV::kDefaultVoiceThreadsCount;
 
 		Logger::Log("[sv:dbg:main:Load] : creating %u work threads...", nprocs);
 

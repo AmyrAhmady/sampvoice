@@ -29,7 +29,7 @@ namespace SV {
 	constexpr const char* kLogFileName = "svlog.txt";
 	constexpr uint32_t kFrequency = 48000;
 	constexpr uint16_t kNonePlayer = 0xffff;
-	constexpr uint32_t kVoiceThreadsCount = 8;
+	constexpr uint32_t kDefaultVoiceThreadsCount = 8;
 	constexpr uint32_t kDefaultBitrate = 24000;
 	constexpr uint8_t kVersion = 11;
 	constexpr uint32_t kSignature = 0xDeadBeef;
