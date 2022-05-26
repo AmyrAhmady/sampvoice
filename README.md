@@ -169,7 +169,7 @@ cmake .. -A Win32
 ```
 Then open solution file (.sln) in your `build` folder.  
 
-To compile the client side of the plugin, you need the *DirectX SDK*. By default, the client part is compiled for version **SA: MP 0.3.7 (R1)**, but you can also explicitly tell the compiler the version for the build using the **SAMP_R1** and **SAMP_R3** macros.
+To compile the client side of the plugin, you need the *DirectX SDK*. By default, the client part is compiled for version **SA:MP 0.3.7 (R1)**, but you can also explicitly tell the compiler the version for the build using the **SAMP_R1** and **SAMP_R3** macros.
 
 ### Linux (Server)
 ---------------------------------
