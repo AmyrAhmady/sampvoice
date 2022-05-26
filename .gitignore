@@ -262,7 +262,6 @@ paket-files/
 __pycache__/
 *.pyc
 
-/server/src/Networking/Legacy/CMakeFiles/*.stamp
 *.depend
 *.stamp
 *.list
@@ -285,9 +284,26 @@ __pycache__/
 *.tlog
 /open.mp/Win32-Debug/temp/gtest/gtest.idb
 /open.mp/Win32-Debug
-/CMakeFiles
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+*.cmake
+DartConfiguration.tcl
 *.pc
-/CMakeCache.txt
 *.amx
 *.i
 .vscode/
+
+*.dll
+*.so
+*.a
+*.pc
+
+conan.lock
+conanbuildinfo.txt
+conanfile.txt
+conaninfo.txt
+graph_info.json
