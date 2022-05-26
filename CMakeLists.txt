@@ -40,6 +40,6 @@ set_property(TARGET sampvoice-server PROPERTY FOLDER "Server")
 
 if(WIN32)
     add_subdirectory(client)
+	set_property(TARGET sampvoice-client PROPERTY FOLDER "Client")
 endif()
 
-set_property(TARGET sampvoice-client PROPERTY FOLDER "Client")
