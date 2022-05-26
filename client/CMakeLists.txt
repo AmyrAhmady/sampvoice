@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} SHARED ${sampvoice_client_source_list})
 add_definitions(-DSAMP_EN)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "sampvoice")
 
 target_sources(${PROJECT_NAME} PRIVATE ${sampvoice_client_resources_list})
 

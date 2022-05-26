@@ -16,6 +16,7 @@ else()
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "sampvoice")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	OMP-SDK
