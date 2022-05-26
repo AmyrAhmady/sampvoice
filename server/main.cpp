@@ -628,7 +628,7 @@ namespace SV
 		PlayerStore::RemovePlayerFromStore(playerId);
 	}
 
-	static __forceinline void Tick() noexcept
+	static void Tick() noexcept
 	{
 		for (const auto dlStream : SV::dlstreamList)
 			dlStream->Tick();

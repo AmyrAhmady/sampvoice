@@ -31,7 +31,7 @@ public:
 	static void Free() noexcept;
 
 	template<class... ARGS>
-	static bool LogToFile(const char* const message, const ARGS... args) noexcept
+	static bool LogToFile(const char* message, const ARGS... args) noexcept
 	{
 		const std::lock_guard<std::mutex> lock{ Logger::logFileMutex };
 
@@ -54,7 +54,7 @@ public:
 	}
 
 	template<class... ARGS>
-	static bool LogToConsole(const char* const message, const ARGS... args) noexcept
+	static bool LogToConsole(const char* message, const ARGS... args) noexcept
 	{
 		const std::lock_guard<std::mutex> lock{ Logger::logConsoleMutex };
 
@@ -67,7 +67,7 @@ public:
 	}
 
 	template<class... ARGS>
-	static inline void Log(const char* const message, const ARGS... args) noexcept
+	static inline void Log(const char* message, const ARGS... args) noexcept
 	{
 		Logger::LogToFile(message, args...);
 		Logger::LogToConsole(message, args...);
