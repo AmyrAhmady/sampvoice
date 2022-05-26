@@ -1,8 +1,9 @@
 /*
 	This is a SampVoice project file
-	Developer: CyberMor <cyber.mor.2020@gmail.ru>
+	Author: CyberMor <cyber.mor.2020@gmail.ru>
+	open.mp version author: AmyrAhmady (iAmir) <hhm6@yahoo.com>
 
-	See more here https://github.com/CyberMor/sampvoice
+	See more here https://github.com/AmyrAhmady/sampvoice
 
 	Copyright (c) Daniel (CyberMor) 2020 All rights reserved
 */
@@ -785,7 +786,8 @@ void SampVoiceComponent::onInit(IComponentList* components)
 	Logger::Log("  |___/\\__,_|_|_|_| .__/\\_/\\___/|_|\\__\\___|");
 	Logger::Log("                  |_|                           ");
 	Logger::Log(" -------------------------------------------    ");
-	Logger::Log("           SampVoice by MOR loaded              ");
+	Logger::Log("                SampVoice by MOR                ");
+	Logger::Log("    Ported to open.mp by AmyrAhmady (iAmir)     ");
 	Logger::Log(" -------------------------------------------    ");
 }
 

@@ -1,14 +1,14 @@
-# **SAMPVOICE**
-English | [Русский](https://github.com/CyberMor/sampvoice/blob/master/README.ru.md)
+# **SAMPVOICE** [Original repository](https://github.com/CyberMor/sampvoice)
+English | [Русский](https://github.com/AmyrAhmady/sampvoice/blob/master/README.ru.md)
 
 ## Description
 ---------------------------------
-**SAMPVOICE** - is a Software Development Kit (SDK) for implementing voice communication systems in the Pawn language for SA:MP servers.
+**SAMPVOICE** - is a Software Development Kit (SDK) for implementing voice communication systems in the Pawn language for open.mp servers.
 
 #### Version support
 ----------------------------------
 * Client: SA:MP 0.3.7 (R1, R3)
-* Server: SA:MP 0.3.7 (R2)
+* Server: Latest open.mp version
 
 ## Features
 ---------------------------------
@@ -27,18 +27,18 @@ Players have access to 2 installation options: automatic (via the installer) and
 
 ##### Automatically
 ---------------------------------
-1. In order to download the installer, head over to [the `releases` page](https://github.com/CyberMor/sampvoice/releases) and choose the desired version of the plugin.
+1. In order to download the installer, head over to [the `releases` page](https://github.com/AmyrAhmady/sampvoice/releases) and choose the desired version of the plugin.
 2. After downloading, launch the installer and choose the desired language for your installation, afterwards the installer will automatically find your GTA San Andreas folder.
 3. If the directory is correct, click "OK" and wait for the installation to complete. After the installation is complete, the installer will exit.
 
 ##### Manually
 ---------------------------------
-1. Head over [the `releases` page](https://github.com/CyberMor/sampvoice/releases) and download the archive with the desired client version.
+1. Head over [the `releases` page](https://github.com/AmyrAhmady/sampvoice/releases) and download the archive with the desired client version.
 2. Extract the archive to your GTA San Andreas folder.
 
 #### For developers
 ---------------------------------
-1. Download from [the `releases` page](https://github.com/CyberMor/sampvoice/releases) the desired version of the plugin for your platform.
+1. Download from [the `releases` page](https://github.com/AmyrAhmady/sampvoice/releases) the desired version of the plugin for your platform.
 2. Unpack the archive to the root directory of the server.
 3. Add to the *server.cfg* server configuration file the line *"plugins sampvoice"* for *Win32* and *"plugins sampvoice.so"* for *Linux x86*. **(If you have a Pawn.RakNet plugin be sure to place SampVoice after it)**
 
@@ -154,19 +154,29 @@ Below are further instructions:
 
 Clone the repository to your computer and go to the plugin directory:
 ```sh
-git clone https://github.com/CyberMor/sampvoice.git
+git clone https://github.com/AmyrAhmady/sampvoice.git
+git submodule update --init --recursive
 cd sampvoice
 ```
 
 ### Windows (Client/Server)
 ---------------------------------
-To compile the client side of the plugin, you need the *DirectX SDK*. By default, the client part is compiled for version **SA: MP 0.3.7 (R1)**, but you can also explicitly tell the compiler the version for the build using the **SAMP_R1** and **SAMP_R3** macros. In order to build the client and server parts of the plugin for the *Win32* platform, open the *sampvoice.sln* project in MS Visual Studio 2019 and compile it:
-> Build -> Build Solution (F7)
+Run cmake against root directory. Example of how it works:
+```sh
+mkdir build
+cd build
+cmake .. -A Win32
+```
+Then open solution file (.sln) in your `build` folder.  
+
+To compile the client side of the plugin, you need the *DirectX SDK*. By default, the client part is compiled for version **SA: MP 0.3.7 (R1)**, but you can also explicitly tell the compiler the version for the build using the **SAMP_R1** and **SAMP_R3** macros.
 
 ### Linux (Server)
 ---------------------------------
-To build the server part of the plugin for the *Linux x86* platform, follow these instructions:
+Run cmake against root directory. Example of how it works:
 ```sh
-cd server
-make
+mkdir build
+cd build
+cmake .. -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32
+cmake --build . --config Release
 ```
