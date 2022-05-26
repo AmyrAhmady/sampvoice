@@ -55,9 +55,6 @@ void OmpNet::Free() noexcept
 	OmpNet::packetCallbacks.clear();
 	OmpNet::disconnectCallbacks.clear();
 
-	OmpNet::hookDisconnect.reset();
-	OmpNet::hookGetRakServerInterface.reset();
-
 	Logger::Log("[dbg:raknet:free] : module released");
 
 	OmpNet::initStatus = false;

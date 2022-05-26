@@ -76,9 +76,6 @@ private:
 
 	RPCFunction origConnectHandler;
 
-	Memory::JumpHookPtr hookDisconnect;
-	Memory::JumpHookPtr hookGetRakServerInterface;
-
 private:
 
 	struct SendRpcInfo {
