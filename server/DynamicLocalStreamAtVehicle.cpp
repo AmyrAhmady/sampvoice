@@ -50,10 +50,8 @@ DynamicLocalStreamAtVehicle::DynamicLocalStreamAtVehicle(
 
 		const Vector3& streamPosition = vehicle->getPosition();
 
-		IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
-		for (IPlayer* player : playerPool->entries())
+		for (IPlayer* player : PlayerStore::internalPlayerPool)
 		{
-			float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);
 
 			if (PlayerStore::IsPlayerHasPlugin(player->getID()) && vehicle->isStreamedInForPlayer(*player) && distanceToPlayer <= distance)
 			{
@@ -87,8 +85,7 @@ void DynamicLocalStreamAtVehicle::Tick()
 		const Vector3& streamPosition = vehicle->getPosition();
 		const float streamDistance = PackGetStruct(&*this->packetStreamUpdateDistance, SV::UpdateLStreamDistancePacket)->distance;
 
-		IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
-		for (IPlayer* player : playerPool->entries())
+		for (IPlayer* player : PlayerStore::internalPlayerPool)
 		{
 			float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);
 

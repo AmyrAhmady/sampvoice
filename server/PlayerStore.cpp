@@ -33,6 +33,17 @@ void PlayerStore::AddPlayerToStore(const uint16_t playerId, const uint8_t versio
 			delete pOldPlayerInfo;
 		}
 	}
+
+	IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+	IPlayer* player = playerPool->get(playerId);
+	if (player)
+	{
+		auto it = PlayerStore::playersUsingSV.find(player);
+		if (it != PlayerStore::playersUsingSV.end())
+		{
+			PlayerStore::playersUsingSV.insert(player);
+		}
+	}
 }
 
 void PlayerStore::RemovePlayerFromStore(const uint16_t playerId)
@@ -52,6 +63,17 @@ void PlayerStore::RemovePlayerFromStore(const uint16_t playerId)
 			stream->DetachSpeaker(playerId);
 
 		delete pPlayerInfo;
+	}
+
+	IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
+	IPlayer* player = playerPool->get(playerId);
+	if (player)
+	{
+		auto it = PlayerStore::playersUsingSV.find(player);
+		if (it != PlayerStore::playersUsingSV.end())
+		{
+			PlayerStore::playersUsingSV.erase(player);
+		}
 	}
 }
 
@@ -112,3 +134,4 @@ void PlayerStore::ReleasePlayerWithUniqueAccess(const uint16_t playerId) noexcep
 
 std::array<std::shared_mutex, PLAYER_POOL_SIZE> PlayerStore::playerMutex;
 std::array<std::atomic<PlayerInfo*>, PLAYER_POOL_SIZE> PlayerStore::playerInfo{};
+FlatPtrHashSet<IPlayer> PlayerStore::internalPlayerPool;

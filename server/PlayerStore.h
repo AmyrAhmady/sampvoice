@@ -29,6 +29,7 @@ class PlayerStore {
 	PlayerStore& operator=(PlayerStore&&) = delete;
 
 public:
+	static FlatPtrHashSet<IPlayer> internalPlayerPool;
 
 	static void AddPlayerToStore(uint16_t playerId, uint8_t version, bool microStatus);
 	static void RemovePlayerFromStore(uint16_t playerId);

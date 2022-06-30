@@ -45,10 +45,8 @@ DynamicLocalStreamAtPoint::DynamicLocalStreamAtPoint(
 
 	PlayerSortList playerList;
 
-	IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
-	for (IPlayer* player : playerPool->entries())
+	for (IPlayer* player : PlayerStore::internalPlayerPool)
 	{
-		float distanceToPlayer = glm::distance(player->getPosition(), position);
 
 		if (PlayerStore::IsPlayerHasPlugin(player->getID()) && distanceToPlayer <= distance)
 		{
@@ -75,8 +73,7 @@ void DynamicLocalStreamAtPoint::Tick()
 	const Vector3& streamPosition = PackGetStruct(&*this->packetCreateStream, SV::CreateLPStreamPacket)->position;
 	const float streamDistance = PackGetStruct(&*this->packetStreamUpdateDistance, SV::UpdateLStreamDistancePacket)->distance;
 
-	IPlayerPool* playerPool = SampVoiceComponent::GetPlayers();
-	for (IPlayer* player : playerPool->entries())
+	for (IPlayer* player : PlayerStore::internalPlayerPool)
 	{
 		float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);
 
