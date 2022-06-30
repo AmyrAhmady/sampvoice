@@ -38,10 +38,10 @@ void PlayerStore::AddPlayerToStore(const uint16_t playerId, const uint8_t versio
 	IPlayer* player = playerPool->get(playerId);
 	if (player)
 	{
-		auto it = PlayerStore::playersUsingSV.find(player);
-		if (it != PlayerStore::playersUsingSV.end())
+		auto it = PlayerStore::internalPlayerPool.find(player);
+		if (it != PlayerStore::internalPlayerPool.end())
 		{
-			PlayerStore::playersUsingSV.insert(player);
+			PlayerStore::internalPlayerPool.insert(player);
 		}
 	}
 }
@@ -69,10 +69,10 @@ void PlayerStore::RemovePlayerFromStore(const uint16_t playerId)
 	IPlayer* player = playerPool->get(playerId);
 	if (player)
 	{
-		auto it = PlayerStore::playersUsingSV.find(player);
-		if (it != PlayerStore::playersUsingSV.end())
+		auto it = PlayerStore::internalPlayerPool.find(player);
+		if (it != PlayerStore::internalPlayerPool.end())
 		{
-			PlayerStore::playersUsingSV.erase(player);
+			PlayerStore::internalPlayerPool.erase(player);
 		}
 	}
 }
