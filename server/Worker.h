@@ -47,6 +47,8 @@ private:
 	{
 		while (status->load(std::memory_order_relaxed))
 		{
+			std::this_thread::sleep_for(Milliseconds(5));
+
 			const auto voicePacket = NetHandler::ReceiveVoicePacket();
 			if (voicePacket == nullptr) continue;
 
