@@ -55,6 +55,7 @@ namespace SV
 	std::map<uint32_t, Stream*> streamTable;
 	std::set<DynamicStream*> dlstreamList;
 	std::vector<WorkerPtr> workers;
+	TimePoint lastUpdateTime = std::chrono::steady_clock::time_point(Milliseconds(0));
 
 	class PawnHandler : public PawnInterface {
 	public:
@@ -630,53 +631,63 @@ namespace SV
 
 	static void Tick() noexcept
 	{
-		for (const auto dlStream : SV::dlstreamList)
-			dlStream->Tick();
+		static auto configuredUpdateRate = std::chrono::steady_clock::duration(Milliseconds(SampVoiceComponent::GetSampVoiceConfigInt("sampvoice.updaterate")));
 
-		uint16_t senderId{ SV::kNonePlayer };
-
-		while (const auto controlPacket = NetHandler::ReceiveControlPacket(senderId))
+		const TimePoint now = Time::now();
+		if (now > (lastUpdateTime + configuredUpdateRate))
 		{
-			const auto& controlPacketRef = *controlPacket;
+			lastUpdateTime = Time::now();
 
-			switch (controlPacketRef->packet)
+			for (const auto dlStream : SV::dlstreamList)
 			{
-			case SV::ControlPacketType::pressKey:
-			{
-				const auto stData = PackGetStruct(&controlPacketRef, SV::PressKeyPacket);
-				if (controlPacketRef->length != sizeof(*stData)) break;
-
-				const auto keyId = stData->keyId;
-				bool pressKeyAllowStatus{ false };
-
-				const auto pPlayerInfo = PlayerStore::RequestPlayerWithSharedAccess(senderId);
-				if (pPlayerInfo != nullptr) pressKeyAllowStatus = pPlayerInfo->keys.find(keyId) != pPlayerInfo->keys.end();
-				PlayerStore::ReleasePlayerWithSharedAccess(senderId);
-
-				if (!pressKeyAllowStatus) break;
-
-				Pawn::OnPlayerActivationKeyPressForAll(senderId, keyId);
-			} break;
-			case SV::ControlPacketType::releaseKey:
-			{
-				const auto stData = PackGetStruct(&controlPacketRef, SV::ReleaseKeyPacket);
-				if (controlPacketRef->length != sizeof(*stData)) break;
-
-				const auto keyId = stData->keyId;
-				bool releaseKeyAllowStatus{ false };
-
-				const auto pPlayerInfo = PlayerStore::RequestPlayerWithSharedAccess(senderId);
-				if (pPlayerInfo != nullptr) releaseKeyAllowStatus = pPlayerInfo->keys.find(keyId) != pPlayerInfo->keys.end();
-				PlayerStore::ReleasePlayerWithSharedAccess(senderId);
-
-				if (!releaseKeyAllowStatus) break;
-
-				Pawn::OnPlayerActivationKeyReleaseForAll(senderId, keyId);
-			} break;
+				dlStream->Tick();
 			}
-		}
 
-		NetHandler::Process();
+			uint16_t senderId{ SV::kNonePlayer };
+
+			while (const auto controlPacket = NetHandler::ReceiveControlPacket(senderId))
+			{
+				const auto& controlPacketRef = *controlPacket;
+
+				switch (controlPacketRef->packet)
+				{
+				case SV::ControlPacketType::pressKey:
+				{
+					const auto stData = PackGetStruct(&controlPacketRef, SV::PressKeyPacket);
+					if (controlPacketRef->length != sizeof(*stData)) break;
+
+					const auto keyId = stData->keyId;
+					bool pressKeyAllowStatus{ false };
+
+					const auto pPlayerInfo = PlayerStore::RequestPlayerWithSharedAccess(senderId);
+					if (pPlayerInfo != nullptr) pressKeyAllowStatus = pPlayerInfo->keys.find(keyId) != pPlayerInfo->keys.end();
+					PlayerStore::ReleasePlayerWithSharedAccess(senderId);
+
+					if (!pressKeyAllowStatus) break;
+
+					Pawn::OnPlayerActivationKeyPressForAll(senderId, keyId);
+				} break;
+				case SV::ControlPacketType::releaseKey:
+				{
+					const auto stData = PackGetStruct(&controlPacketRef, SV::ReleaseKeyPacket);
+					if (controlPacketRef->length != sizeof(*stData)) break;
+
+					const auto keyId = stData->keyId;
+					bool releaseKeyAllowStatus{ false };
+
+					const auto pPlayerInfo = PlayerStore::RequestPlayerWithSharedAccess(senderId);
+					if (pPlayerInfo != nullptr) releaseKeyAllowStatus = pPlayerInfo->keys.find(keyId) != pPlayerInfo->keys.end();
+					PlayerStore::ReleasePlayerWithSharedAccess(senderId);
+
+					if (!releaseKeyAllowStatus) break;
+
+					Pawn::OnPlayerActivationKeyReleaseForAll(senderId, keyId);
+				} break;
+				}
+			}
+
+			NetHandler::Process();
+		}
 	}
 }
 
