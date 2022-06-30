@@ -234,6 +234,7 @@ public:
 	static IPlayerPool* GetPlayers() { return instance->players; }
 	static IVehiclesComponent* GetVehicles() { return instance->vehiclesComponent; }
 	static IObjectsComponent* GetObjects() { return instance->objectsComponent; }
+	static int GetSampVoiceConfigInt(StringView key);
 
 	StringView componentName() const override { return "sampvoice open.mp port"; }
 
@@ -255,7 +256,6 @@ public:
 	void onAmxUnload(void* amx) override { };
 	void onFree(IComponent* component) override;
 	void reset() override {}
-	int GetSampVoiceConfigInt(StringView key) const;
 
 	void onReady() override
 	{

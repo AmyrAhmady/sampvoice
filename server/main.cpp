@@ -844,8 +844,9 @@ void SampVoiceComponent::onFree(IComponent* component)
 	}
 }
 
-int SampVoiceComponent::GetSampVoiceConfigInt(StringView key) const
+int SampVoiceComponent::GetSampVoiceConfigInt(StringView key)
 {
+	ICore* ompCore = SampVoiceComponent::GetCore();
 	uint16_t value = 0;
 	if (ompCore)
 	{
