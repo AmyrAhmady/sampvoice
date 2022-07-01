@@ -634,10 +634,8 @@ namespace SV
 		static auto configuredUpdateRate = std::chrono::steady_clock::duration(Milliseconds(SampVoiceComponent::GetSampVoiceConfigInt("sampvoice.updaterate")));
 
 		const TimePoint now = Time::now();
-		if (now > (lastUpdateTime + configuredUpdateRate))
+		if ((now - lastUpdateTime) > configuredUpdateRate)
 		{
-			lastUpdateTime = Time::now();
-
 			for (const auto dlStream : SV::dlstreamList)
 			{
 				dlStream->Tick();
@@ -687,6 +685,7 @@ namespace SV
 			}
 
 			NetHandler::Process();
+			lastUpdateTime = Time::now();
 		}
 	}
 }
