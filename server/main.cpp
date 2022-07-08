@@ -819,9 +819,6 @@ void SampVoiceComponent::onFree(IComponent* component)
 {
 	if (component == pawnComponent || component == this)
 	{
-		pawnComponent = nullptr;
-		pAMXFunctions = nullptr;
-
 		static bool unloadStatus{ false };
 		if (unloadStatus) return;
 		unloadStatus = true;
@@ -851,6 +848,9 @@ void SampVoiceComponent::onFree(IComponent* component)
 		Pawn::Free();
 		NetHandler::Free();
 		Logger::Free();
+
+		pawnComponent = nullptr;
+		pAMXFunctions = nullptr;
 	}
 }
 
