@@ -90,7 +90,7 @@ void DynamicLocalStreamAtPlayer::Tick()
 		{
 			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && other->isStreamedInForPlayer(*player))
 			{
-				float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);
+				float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 				if (distanceToPlayer <= streamDistance)
 				{
 					if (!this->HasListener(other->getID()))

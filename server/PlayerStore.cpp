@@ -39,7 +39,7 @@ void PlayerStore::AddPlayerToStore(const uint16_t playerId, const uint8_t versio
 	if (player)
 	{
 		auto it = PlayerStore::internalPlayerPool.find(player);
-		if (it != PlayerStore::internalPlayerPool.end())
+		if (it == PlayerStore::internalPlayerPool.end())
 		{
 			PlayerStore::internalPlayerPool.insert(player);
 		}
