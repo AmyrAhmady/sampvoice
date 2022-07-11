@@ -361,17 +361,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateGStream(AMX* const amx, cell* const params)
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[2], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, 0, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateGStream(color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateGStream] : color(0x%x), name(%s) : return(%p)",
@@ -394,17 +387,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateSLStreamAtPoint(AMX* const amx, cell* const
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[6], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateSLStreamAtPoint(distance, posx, posy, posz, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateSLStreamAtPoint] : distance(%.2f), "
@@ -426,17 +412,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateSLStreamAtVehicle(AMX* const amx, cell* con
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[4], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateSLStreamAtVehicle(distance, vehicleid, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateSLStreamAtVehicle] : distance(%.2f), "
@@ -458,17 +437,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateSLStreamAtPlayer(AMX* const amx, cell* cons
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[4], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateSLStreamAtPlayer(distance, playerid, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateSLStreamAtPlayer] : distance(%.2f), "
@@ -490,17 +462,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateSLStreamAtObject(AMX* const amx, cell* cons
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[4], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateSLStreamAtObject(distance, objectid, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateSLStreamAtObject] : distance(%.2f), "
@@ -525,17 +490,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateDLStreamAtPoint(AMX* const amx, cell* const
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[7], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateDLStreamAtPoint(distance, maxplayers, posx, posy, posz, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateDLStreamAtPoint] : distance(%.2f), "
@@ -558,17 +516,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateDLStreamAtVehicle(AMX* const amx, cell* con
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[5], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateDLStreamAtVehicle(distance, maxplayers, vehicleid, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateDLStreamAtVehicle] : distance(%.2f), "
@@ -591,17 +542,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateDLStreamAtPlayer(AMX* const amx, cell* cons
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[5], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateDLStreamAtPlayer(distance, maxplayers, playerid, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateDLStreamAtPlayer] : distance(%.2f), "
@@ -624,17 +568,10 @@ cell AMX_NATIVE_CALL Pawn::n_SvCreateDLStreamAtObject(AMX* const amx, cell* cons
 
 	cell* phys_addr{ nullptr }; int tmp_len{ 0 };
 	if (amx_GetAddr(amx, params[5], &phys_addr) || amx_StrLen(phys_addr, &tmp_len)) return NULL;
+	std::string name(tmp_len + 1, '\0');
+	if (amx_GetString(name.data(), phys_addr, false, tmp_len + 1)) return NULL;
 
-	char* name_c = new char[tmp_len + 1];
-	memset(name_c, 0, tmp_len + 1);
-
-	if (amx_GetString(name_c, phys_addr, false, tmp_len + 1)) return NULL;
-
-	std::string name = std::string();
-	name.copy(name_c, strlen(name_c));
 	const auto result = Pawn::pInterface->SvCreateDLStreamAtObject(distance, maxplayers, objectid, color, name);
-
-	delete[] name_c;
 
 	if (Pawn::debugStatus) Logger::Log(
 		"[sv:dbg:pawn:SvCreateDLStreamAtObject] : distance(%.2f), "
