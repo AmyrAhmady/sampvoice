@@ -38,7 +38,7 @@ set_property(TARGET OMP-SDK PROPERTY FOLDER "Server")
 set_property(TARGET NetCode PROPERTY FOLDER "Server")
 set_property(TARGET sampvoice-server PROPERTY FOLDER "Server")
 
-if(WIN32)
+if(WIN32 AND BUILD_CLIENT)
     add_subdirectory(client)
     set_property(TARGET sampvoice-client PROPERTY FOLDER "Client")
 endif()

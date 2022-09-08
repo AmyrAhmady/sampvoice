@@ -44,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: sampvoice-win-release
-          path: build/Release/sampvoice.dll
+          path: build/server/Release/sampvoice.dll
