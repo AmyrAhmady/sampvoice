@@ -23,7 +23,7 @@
 
 #include "memory.hpp"
 
-class OmpNet: public PlayerEventHandler, public NetworkInEventHandler, public NetworkOutEventHandler {
+class OmpNet: public PlayerConnectEventHandler, public NetworkInEventHandler, public NetworkOutEventHandler {
 
 private:
 

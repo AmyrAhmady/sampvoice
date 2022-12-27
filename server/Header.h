@@ -252,8 +252,8 @@ public:
 
 	void onInit(IComponentList* components) override;
 	void onTick(Microseconds elapsed, TimePoint now) override;
-	void onAmxLoad(void* amx) override;
-	void onAmxUnload(void* amx) override { };
+	void onAmxLoad(IPawnScript& script) override;
+	void onAmxUnload(IPawnScript& script) override { };
 	void onFree(IComponent* component) override;
 	void reset() override {}
 

@@ -752,7 +752,7 @@ void SampVoiceComponent::onInit(IComponentList* components)
 	// add event handlers
 	pawnComponent->getEventDispatcher().addEventHandler(this);
 	ompCore->getEventDispatcher().addEventHandler(this);
-	players->getEventDispatcher().addEventHandler(NetHandler::GetOmpNet());
+	players->getPlayerConnectDispatcher().addEventHandler(NetHandler::GetOmpNet());
 	pAMXFunctions = (void*)&pawnComponent->getAmxFunctions();
 
 	for (auto network : ompCore->getNetworks())
@@ -808,11 +808,11 @@ void SampVoiceComponent::onTick(Microseconds elapsed, TimePoint now)
 	SV::Tick();
 }
 
-void SampVoiceComponent::onAmxLoad(void* amx)
+void SampVoiceComponent::onAmxLoad(IPawnScript& script)
 {
 	if (!NetHandler::Bind()) Logger::Log("[sv:dbg:main:AmxLoad] : failed to bind voice server");
 
-	Pawn::RegisterScript((AMX*)amx);
+	Pawn::RegisterScript(script.GetAMX());
 }
 
 void SampVoiceComponent::onFree(IComponent* component)
@@ -829,7 +829,7 @@ void SampVoiceComponent::onFree(IComponent* component)
 		}
 
 		ompCore->getEventDispatcher().removeEventHandler(this);
-		players->getEventDispatcher().removeEventHandler(NetHandler::GetOmpNet());
+		players->getPlayerConnectDispatcher().removeEventHandler(NetHandler::GetOmpNet());
 
 		for (auto network : ompCore->getNetworks())
 		{
