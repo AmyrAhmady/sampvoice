@@ -19,9 +19,11 @@ endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "sampvoice")
 
+target_include_directories(${PROJECT_NAME} PRIVATE ./include/pawn)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	OMP-SDK
-	NetCode
+	OMP-Network
 )
 
 if(UNIX AND NOT APPLE)
