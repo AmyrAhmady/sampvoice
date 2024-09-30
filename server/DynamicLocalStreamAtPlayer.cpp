@@ -41,6 +41,7 @@ DynamicLocalStreamAtPlayer::DynamicLocalStreamAtPlayer(
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->distance = distance;
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->target = playerId;
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->color = color;
+	bool checkForStreamIn = SampVoiceComponent::instance->GetSampVoiceConfigBool("sampvoice.check_for_stream_in");
 
 	IPlayer* player = SampVoiceComponent::GetPlayers()->get(playerId);
 	if (player != nullptr)
@@ -51,9 +52,19 @@ DynamicLocalStreamAtPlayer::DynamicLocalStreamAtPlayer(
 
 		for (IPlayer* other : PlayerStore::internalPlayerPool)
 		{
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && other->isStreamedInForPlayer(*player))
+			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
+			if (checkForStreamIn)
+			{	
+				if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && other->isStreamedInForPlayer(*player))
+				{
+					if (distanceToPlayer <= distance)
+					{
+						playerList.emplace(distanceToPlayer, other->getID());
+					}
+				}
+			}
+			else
 			{
-				float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 				if (distanceToPlayer <= distance)
 				{
 					playerList.emplace(distanceToPlayer, other->getID());
@@ -85,12 +96,35 @@ void DynamicLocalStreamAtPlayer::Tick()
 
 		const Vector3& streamPosition = player->getPosition();
 		const float streamDistance = PackGetStruct(&*this->packetStreamUpdateDistance, SV::UpdateLStreamDistancePacket)->distance;
+		bool checkForStreamIn = SampVoiceComponent::instance->GetSampVoiceConfigBool("sampvoice.check_for_stream_in");
 
 		for (IPlayer* other : PlayerStore::internalPlayerPool)
 		{
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && other->isStreamedInForPlayer(*player))
+			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
+
+			if (checkForStreamIn)
 			{
-				float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
+				if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && other->isStreamedInForPlayer(*player))
+				{
+					if (distanceToPlayer <= streamDistance)
+					{
+						if (!this->HasListener(other->getID()))
+						{
+							playerList.emplace(distanceToPlayer, other->getID());
+						}
+					}
+					else if (this->HasListener(other->getID()))
+					{
+						this->Stream::DetachListener(other->getID());
+					}
+				}
+				else if (this->HasListener(other->getID()))
+				{
+					this->Stream::DetachListener(other->getID());
+				}
+			}
+			else
+			{
 				if (distanceToPlayer <= streamDistance)
 				{
 					if (!this->HasListener(other->getID()))
@@ -102,10 +136,6 @@ void DynamicLocalStreamAtPlayer::Tick()
 				{
 					this->Stream::DetachListener(other->getID());
 				}
-			}
-			else if (this->HasListener(other->getID()))
-			{
-				this->Stream::DetachListener(other->getID());
 			}
 		}
 

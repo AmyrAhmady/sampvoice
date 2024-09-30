@@ -235,6 +235,7 @@ public:
 	static IVehiclesComponent* GetVehicles() { return instance->vehiclesComponent; }
 	static IObjectsComponent* GetObjects() { return instance->objectsComponent; }
 	static int GetSampVoiceConfigInt(StringView key);
+	static bool GetSampVoiceConfigBool(StringView key);
 
 	StringView componentName() const override { return "sampvoice open.mp port"; }
 

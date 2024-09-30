@@ -854,6 +854,18 @@ void SampVoiceComponent::onFree(IComponent* component)
 	}
 }
 
+bool SampVoiceComponent::GetSampVoiceConfigBool(StringView key)
+{
+	ICore* ompCore = SampVoiceComponent::GetCore();
+	if (ompCore)
+	{
+		bool* ompConfigValue = ompCore->getConfig().getBool(key);
+
+		return *ompConfigValue;
+	}
+	return true;
+}
+
 int SampVoiceComponent::GetSampVoiceConfigInt(StringView key)
 {
 	ICore* ompCore = SampVoiceComponent::GetCore();
