@@ -19,7 +19,6 @@ jobs:
         with:
           clean: true
           submodules: recursive
-          token: ${{ secrets.CI_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Python
@@ -53,7 +52,6 @@ jobs:
         with:
           clean: true
           submodules: recursive
-          token: ${{ secrets.CI_TOKEN }}
           fetch-depth: 0
 
       - name: Install packages
