@@ -815,6 +815,11 @@ void SampVoiceComponent::onAmxLoad(IPawnScript& script)
 	Pawn::RegisterScript(script.GetAMX());
 }
 
+void SampVoiceComponent::onAmxUnload(IPawnScript& script)
+{
+	Pawn::UnregisterScript(script.GetAMX());
+}
+
 void SampVoiceComponent::onFree(IComponent* component)
 {
 	if (component == pawnComponent || component == this)
