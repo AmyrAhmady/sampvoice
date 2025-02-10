@@ -41,7 +41,6 @@ DynamicLocalStreamAtPlayer::DynamicLocalStreamAtPlayer(
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->distance = distance;
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->target = playerId;
 	PackGetStruct(&*this->packetCreateStream, SV::CreateLStreamAtPacket)->color = color;
-	bool checkForStreamIn = SampVoiceComponent::instance->GetSampVoiceConfigBool("sampvoice.check_for_streamed_in");
 
 	IPlayer* player = SampVoiceComponent::GetPlayers()->get(playerId);
 	if (player != nullptr)
@@ -54,7 +53,7 @@ DynamicLocalStreamAtPlayer::DynamicLocalStreamAtPlayer(
 		{
 			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && ((checkForStreamIn && other->isStreamedInForPlayer(*player)) || !checkForStreamIn))
+			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID == player->getID()))
 			{
 				if (distanceToPlayer <= distance)
 				{
@@ -87,13 +86,12 @@ void DynamicLocalStreamAtPlayer::Tick()
 
 		const Vector3& streamPosition = player->getPosition();
 		const float streamDistance = PackGetStruct(&*this->packetStreamUpdateDistance, SV::UpdateLStreamDistancePacket)->distance;
-		bool checkForStreamIn = SampVoiceComponent::instance->GetSampVoiceConfigBool("sampvoice.check_for_streamed_in");
 
 		for (IPlayer* other : PlayerStore::internalPlayerPool)
 		{
 			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && ((checkForStreamIn && other->isStreamedInForPlayer(*player)) || !checkForStreamIn))
+			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID == player->getID()))
 			{
 				if (distanceToPlayer <= streamDistance)
 				{
