@@ -47,7 +47,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install packages
-        run: sudo apt-get install g++-multilib
+        run: sudo apt-get update && sudo apt-get install g++-multilib --fix-missing
 
       - name: Install CMake
         uses: lukka/get-cmake@v.3.23.2
