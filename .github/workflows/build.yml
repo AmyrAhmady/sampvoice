@@ -15,7 +15,7 @@ jobs:
   build-windows-release:
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           clean: true
           submodules: recursive
@@ -32,7 +32,7 @@ jobs:
           cmake --build . --config Release
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sampvoice-win-release
           path: build/server/Release/sampvoice.dll
@@ -40,14 +40,14 @@ jobs:
   build-linux-release:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           clean: true
           submodules: recursive
           fetch-depth: 0
 
       - name: Install packages
-        run: sudo apt-get install g++-multilib
+        run: sudo apt-get update && sudo apt-get install g++-multilib --fix-missing
 
       - name: Install CMake
         uses: lukka/get-cmake@v.3.23.2
@@ -61,7 +61,7 @@ jobs:
           cmake --build . --config Release
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sampvoice-linux-release
           path: build/server/sampvoice.so
