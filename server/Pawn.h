@@ -277,6 +277,7 @@ public:
 	static void Free() noexcept;
 
 	static void RegisterScript(AMX* amx);
+	static void UnregisterScript(AMX* amx);
 
 	static void OnPlayerActivationKeyPressForAll(uint16_t playerid, uint8_t keyid) noexcept;
 	static void OnPlayerActivationKeyReleaseForAll(uint16_t playerid, uint8_t keyid) noexcept;

@@ -235,6 +235,7 @@ public:
 	static IVehiclesComponent* GetVehicles() { return instance->vehiclesComponent; }
 	static IObjectsComponent* GetObjects() { return instance->objectsComponent; }
 	static int GetSampVoiceConfigInt(StringView key);
+	static bool GetSampVoiceConfigBool(StringView key);
 
 	StringView componentName() const override { return "sampvoice open.mp port"; }
 
@@ -253,7 +254,7 @@ public:
 	void onInit(IComponentList* components) override;
 	void onTick(Microseconds elapsed, TimePoint now) override;
 	void onAmxLoad(IPawnScript& script) override;
-	void onAmxUnload(IPawnScript& script) override { };
+	void onAmxUnload(IPawnScript& script) override;
 	void onFree(IComponent* component) override;
 	void reset() override {}
 

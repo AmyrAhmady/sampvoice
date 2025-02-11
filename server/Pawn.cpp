@@ -105,10 +105,16 @@ void Pawn::RegisterScript(AMX* const amx)
 	Pawn::scripts.emplace_back(amx);
 }
 
+void Pawn::UnregisterScript(AMX* const amx)
+{
+	Pawn::scripts.erase(std::remove_if(Pawn::scripts.begin(), Pawn::scripts.end(), [&](AMX* val) {
+		return val == amx;
+	}), Pawn::scripts.end());
+}
+
 void Pawn::OnPlayerActivationKeyPressForAll(const uint16_t playerid, const uint8_t keyid) noexcept
 {
 	if (Pawn::pInterface == nullptr) return;
-
 
 	for (const auto& script : Pawn::scripts)
 	{
