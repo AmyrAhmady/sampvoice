@@ -67,7 +67,7 @@ Players can be both speakers and listeners at the same time. In this case, the p
 #### Example
 ---------------------------------
 Let's take a look at some of the plugin's features with a practical example. Below we will create a server that will bind all connected players to the global stream, and also create a local stream for each player. Thus, players will be able to communicate through the global (heard equally at any point on the map) and local (heard only near the player) chats.
-```php
+```cpp
 #include <sampvoice>
 
 new SV_GSTREAM:gstream = SV_NULL;
@@ -127,6 +127,8 @@ public OnPlayerDisconnect(playerid, reason)
     // Removing the player's local stream after disconnecting
     if (lstream[playerid])
     {
+        SvDetachListenerFromStream(lstream[playerid], playerid);
+        SvDetachSpeakerFromStream(lstream[playerid], playerid);
         SvDeleteStream(lstream[playerid]);
         lstream[playerid] = SV_NULL;
     }
@@ -142,7 +144,16 @@ public OnGameModeInit()
 
 public OnGameModeExit()
 {
-    if (gstream) SvDeleteStream(gstream);
+    if (gstream)
+    {
+        for (new i = 0; i < MAX_PLAYERS; i ++)
+        {
+            if (!IsPlayerConnected(i)) continue;
+            SvDetachListenerFromStream(gstream, i);
+            SvDetachSpeakerFromStream(gstream, i);
+        }
+        SvDeleteStream(gstream);
+    }
 }
 ```
 
