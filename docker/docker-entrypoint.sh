@@ -2,7 +2,7 @@
 [ -z $CONFIG ] && config=Release || config="$CONFIG"
 
 cmake \
-    -S .. \
+    -S . \
     -B build \
     -DCMAKE_BUILD_TYPE=$config \
     -DCMAKE_C_FLAGS=-m32 \
