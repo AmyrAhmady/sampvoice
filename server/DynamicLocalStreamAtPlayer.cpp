@@ -53,7 +53,7 @@ DynamicLocalStreamAtPlayer::DynamicLocalStreamAtPlayer(
 		{
 			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID == player->getID()))
+			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID != INVALID_PLAYER_ID))
 			{
 				if (distanceToPlayer <= distance)
 				{
@@ -91,7 +91,7 @@ void DynamicLocalStreamAtPlayer::Tick()
 		{
 			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID == player->getID()))
+			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID != player->getID()))
 			{
 				if (distanceToPlayer <= streamDistance)
 				{
