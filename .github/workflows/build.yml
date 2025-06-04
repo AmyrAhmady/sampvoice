@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install CMake
-        uses: lukka/get-cmake@v.3.23.2
+        uses: lukka/get-cmake@v3.23.2
 
       - name: Generate build files
         run: |
