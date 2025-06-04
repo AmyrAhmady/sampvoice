@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:18.04
 RUN \
     dpkg --add-architecture i386 && \
     apt-get update && \
@@ -14,7 +14,6 @@ RUN \
     apt-get update && \
     apt-get install -y \
         cmake \
-        ninja-build \
         g++-multilib \
         libstdc++6:i386 \
         libc6:i386 \

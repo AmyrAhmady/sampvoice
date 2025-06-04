@@ -2,9 +2,11 @@
 [ -z $CONFIG ] && config=Release || config="$CONFIG"
 
 cmake \
-    -S . \
+    -S .. \
     -B build \
-    -G Ninja \
+    -DCMAKE_BUILD_TYPE=$config \
+    -DCMAKE_C_FLAGS=-m32 \
+    -DCMAKE_CXX_FLAGS=-m32 \
     -DCMAKE_BUILD_TYPE=$config \
 &&
 cmake \
