@@ -815,6 +815,11 @@ void SampVoiceComponent::onAmxLoad(IPawnScript& script)
 	Pawn::RegisterScript(script.GetAMX());
 }
 
+void SampVoiceComponent::onAmxUnload(IPawnScript& script)
+{
+	Pawn::UnregisterScript(script.GetAMX());
+}
+
 void SampVoiceComponent::onFree(IComponent* component)
 {
 	if (component == pawnComponent || component == this)
@@ -852,6 +857,44 @@ void SampVoiceComponent::onFree(IComponent* component)
 		pawnComponent = nullptr;
 		pAMXFunctions = nullptr;
 	}
+}
+
+bool SampVoiceComponent::GetSampVoiceConfigBool(StringView key)
+{
+	ICore* ompCore = SampVoiceComponent::GetCore();
+	bool value = true;
+	if (ompCore)
+	{
+		bool ompConfigValue = (ompCore->getConfig().getBool(key)) ? (*ompCore->getConfig().getBool(key)) : false;
+		
+		if (!ompConfigValue)
+		{
+			try
+			{
+				std::ifstream file("server.cfg");
+				if (file.is_open())
+				{
+					std::string line;
+					while (std::getline(file, line))
+					{
+						if (line.find(Impl::String(key)) == 0)
+						{
+							value = atoi(line.substr(key.length() + 1).c_str());
+						}
+					}
+				}
+			}
+			catch (...)
+			{
+				value = true;
+			}
+		}
+		else
+		{
+			value = ompConfigValue;
+		}
+	}
+	return value;
 }
 
 int SampVoiceComponent::GetSampVoiceConfigInt(StringView key)

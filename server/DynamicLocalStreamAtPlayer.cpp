@@ -51,9 +51,10 @@ DynamicLocalStreamAtPlayer::DynamicLocalStreamAtPlayer(
 
 		for (IPlayer* other : PlayerStore::internalPlayerPool)
 		{
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && other->isStreamedInForPlayer(*player))
+			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
+
+			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID != INVALID_PLAYER_ID))
 			{
-				float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 				if (distanceToPlayer <= distance)
 				{
 					playerList.emplace(distanceToPlayer, other->getID());
@@ -88,9 +89,10 @@ void DynamicLocalStreamAtPlayer::Tick()
 
 		for (IPlayer* other : PlayerStore::internalPlayerPool)
 		{
-			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && other->isStreamedInForPlayer(*player))
+			float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
+
+			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()) && (other->isStreamedInForPlayer(*player) || other->getSpectateData().spectateID != player->getID()))
 			{
-				float distanceToPlayer = glm::distance(other->getPosition(), streamPosition);
 				if (distanceToPlayer <= streamDistance)
 				{
 					if (!this->HasListener(other->getID()))
