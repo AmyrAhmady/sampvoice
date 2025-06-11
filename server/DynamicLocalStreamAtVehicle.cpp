@@ -52,7 +52,7 @@ DynamicLocalStreamAtVehicle::DynamicLocalStreamAtVehicle(
 
 		for (IPlayer* player : PlayerStore::internalPlayerPool)
 		{
-			if (PlayerStore::IsPlayerHasPlugin(player->getID()) && (vehicle->isStreamedInForPlayer(*player) || player->getSpectateData().spectateID != INVALID_VEHICLE_ID))
+			if (PlayerStore::IsPlayerHasPlugin(player->getID()))
 			{
 				float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);
 				if (distanceToPlayer <= distance) 
@@ -90,7 +90,7 @@ void DynamicLocalStreamAtVehicle::Tick()
 
 		for (IPlayer* player : PlayerStore::internalPlayerPool)
 		{
-			if (PlayerStore::IsPlayerHasPlugin(player->getID()) && (vehicle->isStreamedInForPlayer(*player) || player->getSpectateData().spectateID != INVALID_VEHICLE_ID))
+			if (PlayerStore::IsPlayerHasPlugin(player->getID()))
 			{
 				float distanceToPlayer = glm::distance(player->getPosition(), streamPosition);
 				if (distanceToPlayer <= streamDistance)
