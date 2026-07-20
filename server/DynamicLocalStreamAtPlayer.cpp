@@ -55,7 +55,7 @@ DynamicLocalStreamAtPlayer::DynamicLocalStreamAtPlayer(
 
 			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()))
 			{
-				if (distanceToPlayer <= distance)
+				if (distanceToPlayer <= distance && player->getInterior() == other->getInterior() && player->getVirtualWorld() == other->getVirtualWorld())
 				{
 					playerList.emplace(distanceToPlayer, other->getID());
 				}
@@ -93,7 +93,7 @@ void DynamicLocalStreamAtPlayer::Tick()
 
 			if (other != player && PlayerStore::IsPlayerHasPlugin(other->getID()))
 			{
-				if (distanceToPlayer <= streamDistance)
+				if (distanceToPlayer <= streamDistance && player->getInterior() == other->getInterior() && player->getVirtualWorld() == other->getVirtualWorld())
 				{
 					if (!this->HasListener(other->getID()))
 					{
