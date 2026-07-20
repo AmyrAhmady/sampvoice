@@ -19,6 +19,8 @@
 #include <pawn/plugincommon.h>
 
 #include "Stream.h"
+#include "StreamManager.h"
+#include "EffectManager.h"
 #include "LocalStream.h"
 #include "PointStream.h"
 #include "Effect.h"

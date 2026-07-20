@@ -603,6 +603,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvUpdateDistanceForLStream(AMX* const amx, cell* co
 		lstream, distance
 	);
 
+	if (!StreamManager::IsValidStream(lstream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvUpdateDistanceForLStream] : invalid lstream(%p)",
+			lstream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvUpdateDistanceForLStream(lstream, distance);
 	return NULL;
 }
@@ -624,6 +633,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvUpdatePositionForLPStream(AMX* const amx, cell* c
 		lpstream, posx, posy, posz
 	);
 
+	if (!StreamManager::IsValidStream(lpstream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvUpdatePositionForLPStream] : invalid lpstream(%p)",
+			lpstream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvUpdatePositionForLPStream(lpstream, posx, posy, posz);
 	return NULL;
 }
@@ -635,6 +653,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvAttachListenerToStream(AMX* const amx, cell* cons
 
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto playerid = static_cast<uint16_t>(params[2]);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvAttachListenerToStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	const auto result = Pawn::pInterface->SvAttachListenerToStream(stream, playerid);
 
@@ -654,6 +681,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvHasListenerInStream(AMX* const amx, cell* const p
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto playerid = static_cast<uint16_t>(params[2]);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvHasListenerInStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	const auto result = Pawn::pInterface->SvHasListenerInStream(stream, playerid);
 
 	if (Pawn::debugStatus) Logger::Log(
@@ -671,6 +707,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvDetachListenerFromStream(AMX* const amx, cell* co
 
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto playerid = static_cast<uint16_t>(params[2]);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvDetachListenerFromStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	const auto result = Pawn::pInterface->SvDetachListenerFromStream(stream, playerid);
 
@@ -694,6 +739,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvDetachAllListenersFromStream(AMX* const amx, cell
 		stream
 	);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvDetachAllListenersFromStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvDetachAllListenersFromStream(stream);
 	return NULL;
 }
@@ -705,6 +759,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvAttachSpeakerToStream(AMX* const amx, cell* const
 
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto playerid = static_cast<uint16_t>(params[2]);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvAttachSpeakerToStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	const auto result = Pawn::pInterface->SvAttachSpeakerToStream(stream, playerid);
 
@@ -724,6 +787,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvHasSpeakerInStream(AMX* const amx, cell* const pa
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto playerid = static_cast<uint16_t>(params[2]);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvHasSpeakerInStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	const auto result = Pawn::pInterface->SvHasSpeakerInStream(stream, playerid);
 
 	if (Pawn::debugStatus) Logger::Log(
@@ -741,6 +813,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvDetachSpeakerFromStream(AMX* const amx, cell* con
 
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto playerid = static_cast<uint16_t>(params[2]);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvDetachSpeakerFromStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	const auto result = Pawn::pInterface->SvDetachSpeakerFromStream(stream, playerid);
 
@@ -764,6 +845,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvDetachAllSpeakersFromStream(AMX* const amx, cell*
 		stream
 	);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvDetachAllSpeakersFromStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvDetachAllSpeakersFromStream(stream);
 	return NULL;
 }
@@ -780,6 +870,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvStreamParameterSet(AMX* const amx, cell* const pa
 	if (Pawn::debugStatus) Logger::Log("[sv:dbg:pawn:SvStreamParameterSet] : "
 		"stream(%p), parameter(%hhu), value(%.2f)", stream, parameter, value);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvStreamParameterSet] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvStreamParameterSet(stream, parameter, value);
 	return NULL;
 }
@@ -795,6 +894,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvStreamParameterReset(AMX* const amx, cell* const 
 	if (Pawn::debugStatus) Logger::Log("[sv:dbg:pawn:SvStreamParameterReset] : "
 		"stream(%p), parameter(%hhu)", stream, parameter);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvStreamParameterReset] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvStreamParameterReset(stream, parameter);
 	return NULL;
 }
@@ -806,6 +914,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvStreamParameterHas(AMX* const amx, cell* const pa
 
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto parameter = static_cast<uint8_t>(params[2]);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvStreamParameterHas] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	const auto result = Pawn::pInterface->SvStreamParameterHas(stream, parameter);
 
@@ -822,6 +939,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvStreamParameterGet(AMX* const amx, cell* const pa
 
 	const auto stream = reinterpret_cast<Stream*>(params[1]);
 	const auto parameter = static_cast<uint8_t>(params[2]);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvStreamParameterGet] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	const auto result = Pawn::pInterface->SvStreamParameterGet(stream, parameter);
 
@@ -846,6 +972,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvStreamParameterSlideFromTo(AMX* const amx, cell* 
 		"stream(%p), parameter(%hhu), startvalue(%.2f), endvalue(%.2f), time(%u)",
 		stream, parameter, startvalue, endvalue, time);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvStreamParameterSlideFromTo] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvStreamParameterSlideFromTo(stream, parameter, startvalue, endvalue, time);
 	return NULL;
 }
@@ -863,6 +998,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvStreamParameterSlideTo(AMX* const amx, cell* cons
 	if (Pawn::debugStatus) Logger::Log("[sv:dbg:pawn:SvStreamParameterSlideTo] : "
 		"stream(%p), parameter(%hhu), endvalue(%.2f), time(%u)",
 		stream, parameter, endvalue, time);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvStreamParameterSlideTo] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	Pawn::pInterface->SvStreamParameterSlideTo(stream, parameter, endvalue, time);
 	return NULL;
@@ -882,6 +1026,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvStreamParameterSlide(AMX* const amx, cell* const 
 		"stream(%p), parameter(%hhu), deltavalue(%.2f), time(%u)",
 		stream, parameter, deltavalue, time);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvStreamParameterSlide] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvStreamParameterSlide(stream, parameter, deltavalue, time);
 	return NULL;
 }
@@ -897,6 +1050,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvDeleteStream(AMX* const amx, cell* const params)
 		"[sv:dbg:pawn:SvDeleteStream] : stream(%p)",
 		stream
 	);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvDeleteStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
 
 	Pawn::pInterface->SvDeleteStream(stream);
 	return NULL;
@@ -1115,6 +1277,24 @@ cell AMX_NATIVE_CALL Pawn::n_SvEffectAttachStream(AMX* const amx, cell* const pa
 	if (Pawn::debugStatus) Logger::Log("[sv:dbg:pawn:SvEffectAttachStream] : "
 		"effect(%p), stream(%p)", effect, stream);
 
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvEffectAttachStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
+	if (!EffectManager::IsValidEffect(effect)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvEffectAttachStream] : invalid effect(%p)",
+			effect
+		);
+		return NULL;
+	}
+
 	Pawn::pInterface->SvEffectAttachStream(effect, stream);
 	return NULL;
 }
@@ -1129,6 +1309,24 @@ cell AMX_NATIVE_CALL Pawn::n_SvEffectDetachStream(AMX* const amx, cell* const pa
 
 	if (Pawn::debugStatus) Logger::Log("[sv:dbg:pawn:SvEffectDetachStream] : "
 		"effect(%p), stream(%p)", effect, stream);
+
+	if (!StreamManager::IsValidStream(stream)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvEffectDetachStream] : invalid stream(%p)",
+			stream
+		);
+		return NULL;
+	}
+
+	if (!EffectManager::IsValidEffect(effect)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvEffectDetachStream] : invalid effect(%p)",
+			effect
+		);
+		return NULL;
+	}
 
 	Pawn::pInterface->SvEffectDetachStream(effect, stream);
 	return NULL;
@@ -1145,6 +1343,15 @@ cell AMX_NATIVE_CALL Pawn::n_SvEffectDelete(AMX* const amx, cell* const params)
 		"[sv:dbg:pawn:SvEffectDelete] : effect(%p)",
 		effect
 	);
+
+	if (!EffectManager::IsValidEffect(effect)) 
+	{
+		if (Pawn::debugStatus) Logger::Log(
+			"[sv:dbg:pawn:SvEffectDelete] : invalid effect(%p)",
+			effect
+		);
+		return NULL;
+	}
 
 	Pawn::pInterface->SvEffectDelete(effect);
 	return NULL;

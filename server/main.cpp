@@ -20,6 +20,8 @@
 #include "PlayerStore.h"
 #include "Worker.h"
 
+#include "EffectManager.h"
+
 #include "Stream.h"
 #include "GlobalStream.h"
 #include "LocalStream.h"
@@ -550,47 +552,47 @@ namespace SV
 
 		Effect* SvEffectCreateChorus(const int priority, const float wetdrymix, const float depth, const float feedback, const float frequency, const uint32_t waveform, const float delay, const uint32_t phase) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::chorus, priority, ChorusParameters{ wetdrymix, depth, feedback, frequency, waveform, delay, phase });
+			return EffectManager::CreateEffect(SV::EffectType::chorus, priority, ChorusParameters{ wetdrymix, depth, feedback, frequency, waveform, delay, phase }); // line 555
 		}
 
 		Effect* SvEffectCreateCompressor(const int priority, const float gain, const float attack, const float release, const float threshold, const float ratio, const float predelay) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::compressor, priority, CompressorParameters{ gain, attack, release, threshold, ratio, predelay });
+			return EffectManager::CreateEffect(SV::EffectType::compressor, priority, CompressorParameters{ gain, attack, release, threshold, ratio, predelay });
 		}
 
 		Effect* SvEffectCreateDistortion(const int priority, const float gain, const float edge, const float posteqcenterfrequency, const float posteqbandwidth, const float prelowpasscutoff) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::distortion, priority, DistortionParameters{ gain, edge, posteqcenterfrequency, posteqbandwidth, prelowpasscutoff });
+			return EffectManager::CreateEffect(SV::EffectType::distortion, priority, DistortionParameters{ gain, edge, posteqcenterfrequency, posteqbandwidth, prelowpasscutoff });
 		}
 
 		Effect* SvEffectCreateEcho(const int priority, const float wetdrymix, const float feedback, const float leftdelay, const float rightdelay, const bool pandelay) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::echo, priority, EchoParameters{ wetdrymix, feedback, leftdelay, rightdelay, pandelay });
+			return EffectManager::CreateEffect(SV::EffectType::echo, priority, EchoParameters{ wetdrymix, feedback, leftdelay, rightdelay, pandelay });
 		}
 
 		Effect* SvEffectCreateFlanger(const int priority, const float wetdrymix, const float depth, const float feedback, const float frequency, const uint32_t waveform, const float delay, const uint32_t phase) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::flanger, priority, FlangerParameters{ wetdrymix, depth, feedback, frequency, waveform, delay, phase });
+			return EffectManager::CreateEffect(SV::EffectType::flanger, priority, FlangerParameters{ wetdrymix, depth, feedback, frequency, waveform, delay, phase });
 		}
 
 		Effect* SvEffectCreateGargle(const int priority, const uint32_t ratehz, const uint32_t waveshape) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::gargle, priority, GargleParameters{ ratehz, waveshape });
+			return EffectManager::CreateEffect(SV::EffectType::gargle, priority, GargleParameters{ ratehz, waveshape });
 		}
 
 		Effect* SvEffectCreateI3dl2reverb(const int priority, const int room, const int roomhf, const float roomrollofffactor, const float decaytime, const float decayhfratio, const int reflections, const float reflectionsdelay, const int reverb, const float reverbdelay, const float diffusion, const float density, const float hfreference) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::i3dl2reverb, priority, I3dl2reverbParameters{ room, roomhf, roomrollofffactor, decaytime, decayhfratio, reflections, reflectionsdelay, reverb, reverbdelay, diffusion, density, hfreference });
+			return EffectManager::CreateEffect(SV::EffectType::i3dl2reverb, priority, I3dl2reverbParameters{ room, roomhf, roomrollofffactor, decaytime, decayhfratio, reflections, reflectionsdelay, reverb, reverbdelay, diffusion, density, hfreference });
 		}
 
 		Effect* SvEffectCreateParameq(const int priority, const float center, const float bandwidth, const float gain) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::parameq, priority, ParameqParameters{ center, bandwidth, gain });
+			return EffectManager::CreateEffect(SV::EffectType::parameq, priority, ParameqParameters{ center, bandwidth, gain });
 		}
 
 		Effect* SvEffectCreateReverb(const int priority, const float ingain, const float reverbmix, const float reverbtime, const float highfreqrtratio) override
 		{
-			return new (std::nothrow) Effect(SV::EffectType::reverb, priority, ReverbParameters{ ingain, reverbmix, reverbtime, highfreqrtratio });
+			return EffectManager::CreateEffect(SV::EffectType::reverb, priority, ReverbParameters{ ingain, reverbmix, reverbtime, highfreqrtratio });
 		}
 
 		void SvEffectAttachStream(Effect* const effect, Stream* const stream) override

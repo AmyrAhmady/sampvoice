@@ -1,3 +1,5 @@
+#include "EffectManager.h"
+#include "StreamManager.h"
 #include "Effect.h"
 
 #include <functional>
@@ -10,27 +12,36 @@ Effect::~Effect()
 {
 	for (const auto stream : this->attachedStreams)
 	{
+		if (StreamManager::IsValidStream(stream))
 		{
-			const auto iter = this->streamPlayerCallbacks.find(stream);
-			if (iter != this->streamPlayerCallbacks.end())
 			{
-				stream->RemovePlayerCallback(iter->second);
+				const auto iter = this->streamPlayerCallbacks.find(stream);
+				if (iter != this->streamPlayerCallbacks.end())
+				{
+					stream->RemovePlayerCallback(iter->second);
+				}
 			}
-		}
 
+			{
+				const auto iter = this->streamDeleteCallbacks.find(stream);
+				if (iter != this->streamDeleteCallbacks.end())
+				{
+					stream->RemoveDeleteCallback(iter->second);
+				}
+			}
+
+			PackGetStruct(&*this->packetDeleteEffect, SV::DeleteEffectPacket)->stream
+				= reinterpret_cast<uint32_t>(stream);
+
+			stream->SendControlPacket(*&*this->packetDeleteEffect);
+		}
+		else
 		{
-			const auto iter = this->streamDeleteCallbacks.find(stream);
-			if (iter != this->streamDeleteCallbacks.end())
-			{
-				stream->RemoveDeleteCallback(iter->second);
-			}
+			this->attachedStreams.erase(stream);
 		}
-
-		PackGetStruct(&*this->packetDeleteEffect, SV::DeleteEffectPacket)->stream
-			= reinterpret_cast<uint32_t>(stream);
-
-		stream->SendControlPacket(*&*this->packetDeleteEffect);
 	}
+
+	EffectManager::UnregisterEffect(this);
 }
 
 void Effect::AttachStream(Stream* const stream)

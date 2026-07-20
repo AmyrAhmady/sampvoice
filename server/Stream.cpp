@@ -8,6 +8,7 @@
 	Copyright (c) Daniel (CyberMor) 2020 All rights reserved
 */
 
+#include "StreamManager.h"
 #include "Stream.h"
 
 #include <cassert>
@@ -21,6 +22,8 @@ Stream::Stream()
 	PackWrap(this->packetDeleteStream, SV::ControlPacketType::deleteStream, sizeof(SV::DeleteStreamPacket));
 
 	PackGetStruct(&*this->packetDeleteStream, SV::DeleteStreamPacket)->stream = reinterpret_cast<uint32_t>(this);
+
+	StreamManager::RegisterStream(this);
 }
 
 Stream::~Stream() noexcept
@@ -29,6 +32,8 @@ Stream::~Stream() noexcept
 	{
 		if (deleteCallback != nullptr) deleteCallback(this);
 	}
+
+	StreamManager::UnregisterStream(this);
 }
 
 void Stream::SendVoicePacket(VoicePacket& voicePacket) const
